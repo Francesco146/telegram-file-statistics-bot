@@ -1,11 +1,12 @@
 import logging
 
+LOCAL_MODE = False
+
 
 class CustomFormatter(logging.Formatter):
 
     grey = "\x1b[38;20m"
     yellow = "\x1b[33;20m"
-    red = "\x1b[31;20m"
     bold_red = "\x1b[31;1m"
     reset = "\x1b[0m"
     format = (
@@ -16,7 +17,7 @@ class CustomFormatter(logging.Formatter):
         logging.DEBUG: grey + format + reset,
         logging.INFO: grey + format + reset,
         logging.WARNING: yellow + format + reset,
-        logging.ERROR: red + format + reset,
+        logging.ERROR: bold_red + format + reset,
         logging.CRITICAL: bold_red + format + reset,
     }
 
@@ -27,7 +28,7 @@ class CustomFormatter(logging.Formatter):
 
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 ch = logging.StreamHandler()
 ch.setFormatter(CustomFormatter())

@@ -4,7 +4,8 @@ import humanize
 from telegram import Update
 from telegram.ext import ContextTypes
 from .database import get_user_data, update_user_data
-from . import logger
+from .archive_utils import handle_archive, is_archive
+from . import logger, LOCAL_MODE
 
 
 async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -21,7 +22,7 @@ async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     The function performs the following steps:
     1. Extracts user ID, file, file size, and file name from the update.
     2. Retrieves user statistics using the user ID.
-    3. Updates the user's total file size and file count (excluding .zip files).
+    3. Updates the user's total file size, file count and total download size.
     4. Increments the count of streamable files if the file is a video.
     5. Updates the count of files by their extension category.
     6. Saves the updated user statistics.
@@ -34,10 +35,36 @@ async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         file_size = file.file_size
         file_name = file.file_name
 
+        if is_archive(file_name):
+            if not LOCAL_MODE:
+                await update.message.reply_text(
+                    "Gli archivi non sono supportati in modalità non locale."
+                )
+                logger.warning("Archives are not supported in non-local mode.")
+                return
+
+            await update.message.reply_text(
+                f"Attendere, sto elaborando l'archivio: '{file_name}'... Questo potrebbe richiedere del tempo."
+            )
+            logger.debug(
+                "Processing archive: '%s' (%s)",
+                file_name,
+                humanize.naturalsize(file_size),
+            )
+            await handle_archive(update, context, file.file_id)
+            await update.message.reply_text(f"Archivio elaborato: '{file_name}'.")
+            return
+
+        logger.debug(
+            "Processing file: '%s' (%s)",
+            file_name,
+            humanize.naturalsize(file_size),
+        )
         user_stats = get_user_data(user_id)
 
         user_stats["total_size"] += file_size
-        user_stats["file_count"] += 1 if not file_name.lower().endswith(".zip") else 0
+        user_stats["total_download_size"] += file_size
+        user_stats["file_count"] += 1
 
         mime_type, _ = mimetypes.guess_type(file_name)
         if mime_type and mime_type.startswith("video"):
@@ -70,7 +97,7 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     Raises:
         Exception: If there is an error while fetching or sending the user statistics.
 
-    The function retrieves the user statistics such as total file size, number of files uploaded,
+    The function retrieves the user statistics such as total file size, total download size, number of files uploaded,
     number of streamable videos, and file extensions. It formats these statistics into an HTML
     message and sends it to the user. If an error occurs during this process, an error message
     is logged and a generic error message is sent to the user.
@@ -86,6 +113,7 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
         msg = (
             f"Dimensione totale dei file: <code>{humanize.naturalsize(user_stats['total_size'])}</code>\n"
+            f"Dimensione totale dei file da scaricare: <code>{humanize.naturalsize(user_stats['total_download_size'])}</code>\n"
             f"Numero di file caricati: <code>{file_count}</code>\n"
             f"File riproducibili in streaming: <code>{user_stats['streamable']} video</code>\n"
             "Estensioni:\n"
@@ -106,8 +134,7 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
     Resets the user's statistics to default values.
 
-    This function updates the user's data to reset their statistics, including
-    total size, file count, streamable count, and extension categories. It sends
+    This function updates the user's data to reset their statistics. It sends
     a confirmation message to the user upon success, or an error message if an
     exception occurs.
 
@@ -126,6 +153,7 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             user_id,
             {
                 "total_size": 0,
+                "total_download_size": 0,
                 "file_count": 0,
                 "streamable": 0,
                 "extension_categories": {},
