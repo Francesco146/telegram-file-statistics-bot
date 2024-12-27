@@ -4,6 +4,7 @@ This is a Telegram bot that provides statistics about files sent by users. The b
 
 - [Telegram Bot for File Statistics](#telegram-bot-for-file-statistics)
   - [Features](#features)
+  - [Preview](#preview)
   - [Requirements](#requirements)
   - [Installation](#installation)
   - [Usage](#usage)
@@ -15,10 +16,18 @@ This is a Telegram bot that provides statistics about files sent by users. The b
 ## Features
 
 - Track total file size
+- Track total download size
 - Count the number of files
 - Identify streamable files (e.g., videos)
 - Categorize files by their extensions
 - Commands to view statistics and reset data
+
+## Preview
+
+<img src="imgs/stats.png" alt="stats"/>
+<img src="imgs/zip_received.png" alt="zip_received"/>
+<img src="imgs/file_received.png" alt="file_received"/>
+<img src="imgs/help.png" alt="help"/>
 
 ## Requirements
 
@@ -51,6 +60,9 @@ This is a Telegram bot that provides statistics about files sent by users. The b
 5. Create a `.env` file in the root directory and add your Telegram bot token:
     ```env
     TOKEN='your-telegram-bot-token'
+    # For local server
+    TELEGRAM_API_ID='your-telegram-api-id'
+    TELEGRAM_API_HASH='your-telegram-api-hash'
     ```
 
 ## Usage

@@ -10,12 +10,13 @@ import logging
 load_dotenv()
 
 
-def main(token: str) -> None:
+def main(token: str, local: bool) -> None:
     """
     Main function to start the bot application.
 
     Args:
         token (str): The token for authenticating the bot with the Telegram API.
+        local (bool): A flag indicating whether the bot should run with a telegram api bot local server.
 
     Returns:
         None
@@ -32,9 +33,20 @@ def main(token: str) -> None:
         logger.error("Token not provided. Exiting...")
         return
 
-    application = ApplicationBuilder().token(token).build()
+    application = ApplicationBuilder().token(token).local_mode(local)
+    if local:
+        application.base_url("http://0.0.0.0:8081/bot")
+        application.base_file_url("http://0.0.0.0:8081/file/bot")
+        application.read_timeout(1000)  # high value for large files in local mode
+
+    application = application.build()
     application.add_handler(CommandHandler(["start", "help"], help_command))
-    application.add_handler(MessageHandler(filters.Document.ALL, handle_file))
+    application.add_handler(
+        MessageHandler(
+            filters.Document.ALL,
+            lambda update, context: handle_file(update, context, local),
+        )
+    )
     application.add_handler(CommandHandler("stats", stats))
     application.add_handler(CommandHandler("reset", reset))
 
@@ -50,4 +62,9 @@ if __name__ == "__main__":
         logger.setLevel(logging.DEBUG)
 
     init_db()
-    main(args.token or os.getenv("TOKEN"))
+    logger.debug("Current configuration:")
+    for arg in vars(args):
+        if arg not in ["token"]:
+            logger.debug(f"  * {arg}: {getattr(args, arg)}")
+
+    main(args.token or os.getenv("TOKEN"), args.local)
