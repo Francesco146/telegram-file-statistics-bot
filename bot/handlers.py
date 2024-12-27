@@ -5,16 +5,19 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from .database import get_user_data, update_user_data
 from .archive_utils import handle_archive, is_archive
-from . import logger, LOCAL_MODE
+from . import logger
 
 
-async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def handle_file(
+    update: Update, context: ContextTypes.DEFAULT_TYPE, local_mode: bool
+) -> None:
     """
     Handles an incoming file from a user, updates user statistics, and sends a confirmation message.
 
     Args:
         update (Update): The update object containing the message and user information.
         context (ContextTypes.DEFAULT_TYPE): The context object for the current conversation.
+        local_mode (bool): A flag indicating whether the bot is running in local mode.
 
     Raises:
         Exception: If there is an error during file handling.
@@ -36,7 +39,7 @@ async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         file_name = file.file_name
 
         if is_archive(file_name):
-            if not LOCAL_MODE:
+            if not local_mode:
                 await update.message.reply_text(
                     "Gli archivi non sono supportati in modalità non locale."
                 )

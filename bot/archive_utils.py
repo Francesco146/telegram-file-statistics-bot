@@ -45,10 +45,12 @@ async def handle_archive(
         user_id = update.effective_user.id
         user_stats = get_user_data(user_id)
 
-        archive_absolute_path = await (
-            await context.bot.get_file(file_id)
-        ).download_to_drive()
+        file = await context.bot.get_file(file_id)
 
+        split_path = file.file_path.split("/")
+        # api/telegram-bot-api-data/<token>/documents/<file_name>
+        base_dir = os.path.join("api/telegram-bot-api-data", split_path[-3])
+        archive_absolute_path = os.path.join(base_dir, split_path[-2], split_path[-1]) 
         with tempfile.TemporaryDirectory() as temp_dir:
             with zipfile.ZipFile(archive_absolute_path, "r") as archive_ref:
                 archive_ref.extractall(temp_dir)

@@ -4,7 +4,7 @@ import os
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters
 from bot.handlers import handle_file, stats, reset, help_command
 from bot.database import init_db, Database
-from bot import logger, LOCAL_MODE
+from bot import logger
 import logging
 
 load_dotenv()
@@ -41,7 +41,12 @@ def main(token: str, local: bool) -> None:
 
     application = application.build()
     application.add_handler(CommandHandler(["start", "help"], help_command))
-    application.add_handler(MessageHandler(filters.Document.ALL, handle_file))
+    application.add_handler(
+        MessageHandler(
+            filters.Document.ALL,
+            lambda update, context: handle_file(update, context, local),
+        )
+    )
     application.add_handler(CommandHandler("stats", stats))
     application.add_handler(CommandHandler("reset", reset))
 
@@ -51,8 +56,6 @@ def main(token: str, local: bool) -> None:
 
 if __name__ == "__main__":
     args = parse_args()
-    LOCAL_MODE = args.local
-
     Database.db_path = args.database
 
     if args.debug:
@@ -62,6 +65,6 @@ if __name__ == "__main__":
     logger.debug("Current configuration:")
     for arg in vars(args):
         if arg not in ["token"]:
-            logger.debug(f"\t* {arg}: {getattr(args, arg)}")
+            logger.debug(f"  * {arg}: {getattr(args, arg)}")
 
     main(args.token or os.getenv("TOKEN"), args.local)

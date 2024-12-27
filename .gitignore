@@ -233,4 +233,4 @@ pyrightconfig.json
 *.lock
 
 # api folder for local server
-api/
+api/telegram-bot-api-data

@@ -1,7 +1,5 @@
 import logging
 
-LOCAL_MODE = False
-
 
 class CustomFormatter(logging.Formatter):
 
