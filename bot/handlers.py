@@ -41,13 +41,13 @@ async def handle_file(
         if is_archive(file_name):
             if not local_mode:
                 await update.message.reply_text(
-                    "Gli archivi non sono supportati in modalità non locale."
+                    "Archives are not supported in non-local mode."
                 )
                 logger.warning("Archives are not supported in non-local mode.")
                 return
 
             await update.message.reply_text(
-                f"Attendere, sto elaborando l'archivio: '{file_name}'... Questo potrebbe richiedere del tempo."
+                f"Processing archive: '{file_name}'... This may take some time."
             )
             logger.debug(
                 "Processing archive: '%s' (%s)",
@@ -55,7 +55,7 @@ async def handle_file(
                 humanize.naturalsize(file_size),
             )
             await handle_archive(update, context, file.file_id)
-            await update.message.reply_text(f"Archivio elaborato: '{file_name}'.")
+            await update.message.reply_text(f"Archive received: '{file_name}'.")
             return
 
         logger.debug(
@@ -79,11 +79,11 @@ async def handle_file(
 
         update_user_data(user_id, user_stats)
         await update.message.reply_text(
-            f"File ricevuto: '{file_name}' ({humanize.naturalsize(file_size)})."
+            f"File received: '{file_name}' ({humanize.naturalsize(file_size)})"
         )
     except Exception as e:
         logger.error("Error handling file: %s", e)
-        await update.message.reply_text("Errore durante l'elaborazione del file.")
+        await update.message.reply_text("Error handling file.")
 
 
 async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -115,22 +115,22 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             file_count += " file"
 
         msg = (
-            f"Dimensione totale dei file: <code>{humanize.naturalsize(user_stats['total_size'])}</code>\n"
-            f"Dimensione totale dei file da scaricare: <code>{humanize.naturalsize(user_stats['total_download_size'])}</code>\n"
-            f"Numero di file caricati: <code>{file_count}</code>\n"
-            f"File riproducibili in streaming: <code>{user_stats['streamable']} video</code>\n"
-            "Estensioni:\n"
+            f"Total file size: <code>{humanize.naturalsize(user_stats['total_size'])}</code>\n"
+            f"Total download size: <code>{humanize.naturalsize(user_stats['total_download_size'])}</code>\n"
+            f"Number of files uploaded: <code>{file_count}</code>\n"
+            f"Streamable files: <code>{user_stats['streamable']} {"videos" if user_stats['streamable'] > 1 else 'video'}</code>\n"
+            "Extensions:\n"
         )
         if not user_stats["extension_categories"]:
-            msg += "<code>Nessuna estensione trovata</code>\n"
+            msg += "<code>No files uploaded yet.</code>\n"
         else:
             for ext, count in user_stats["extension_categories"].items():
-                msg += f"<code>{ext}: {count}</code>\n"
+                msg += f"<code>{ext}: {count} {"video" if count == 1 else "videos"}</code>\n"
 
         await update.message.reply_html(msg)
     except Exception as e:
         logger.error("Error getting stats: %s", e)
-        await update.message.reply_text("Errore durante il recupero delle statistiche.")
+        await update.message.reply_text("Error getting statistics.")
 
 
 async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -162,12 +162,10 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 "extension_categories": {},
             },
         )
-        await update.message.reply_text("Statistiche reimpostate con successo.")
+        await update.message.reply_text("Statistics reset.")
     except Exception as e:
         logger.error("Error resetting stats: %s", e)
-        await update.message.reply_text(
-            "Errore durante il ripristino delle statistiche."
-        )
+        await update.message.reply_text("Error resetting statistics.")
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -182,10 +180,10 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         None
     """
     await update.message.reply_text(
-        f"Benvenuto {update.effective_user.first_name} nel bot per il monitoraggio dei file! Ecco cosa puoi fare:\n"
-        "/start - Avvia il bot e ricevi informazioni su come usarlo.\n"
-        "/stats - Visualizza le statistiche sui file caricati.\n"
-        "/reset - Reimposta le statistiche.\n"
-        "/help - Mostra questo messaggio di aiuto.\n"
-        "Puoi anche inviare documenti e ricevere riepiloghi sulla loro dimensione e altro."
+        f"Welcome {update.effective_user.first_name} to the file monitoring bot! Here's what you can do:\n"
+        "/start - Start the bot and get information on how to use it.\n"
+        "/stats - View statistics on uploaded files.\n"
+        "/reset - Reset the statistics.\n"
+        "/help - Show this help message.\n"
+        "You can also send documents and receive summaries on their size and more."
     )

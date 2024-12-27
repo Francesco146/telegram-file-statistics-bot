@@ -50,7 +50,7 @@ async def handle_archive(
         split_path = file.file_path.split("/")
         # api/telegram-bot-api-data/<token>/documents/<file_name>
         base_dir = os.path.join("api/telegram-bot-api-data", split_path[-3])
-        archive_absolute_path = os.path.join(base_dir, split_path[-2], split_path[-1]) 
+        archive_absolute_path = os.path.join(base_dir, split_path[-2], split_path[-1])
         with tempfile.TemporaryDirectory() as temp_dir:
             with zipfile.ZipFile(archive_absolute_path, "r") as archive_ref:
                 archive_ref.extractall(temp_dir)
@@ -78,14 +78,14 @@ async def handle_archive(
 
                     update_user_data(user_id, user_stats)
                     await update.message.reply_text(
-                        f"File ricevuto tramite archivio: '{file}' ({humanize.naturalsize(file_size)})."
+                        f"File received via archive: '{file}' ({humanize.naturalsize(file_size)})."
                     )
 
             user_stats["total_download_size"] += os.path.getsize(archive_absolute_path)
             update_user_data(user_id, user_stats)
     except Exception as e:
         logger.error("Error handling zip file: %s", e)
-        await update.message.reply_text("Errore durante l'elaborazione del file.")
+        await update.message.reply_text("Error handling zip file.")
 
 
 def is_archive(file_name: str) -> bool:
