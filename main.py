@@ -1,8 +1,21 @@
 from dotenv import load_dotenv
 from bot.args import parse_args
 import os
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters
-from bot.handlers import handle_file, stats, reset, help_command
+from telegram.ext import (
+    ApplicationBuilder,
+    CommandHandler,
+    MessageHandler,
+    filters,
+    CallbackQueryHandler,
+)
+from bot.handlers import (
+    handle_file,
+    stats,
+    reset,
+    help_command,
+    start_command,
+    callback_query_handler,
+)
 from bot.database import init_db, Database
 from bot import logger
 import logging
@@ -40,7 +53,8 @@ def main(token: str, local: bool) -> None:
         application.read_timeout(1000)  # high value for large files in local mode
 
     application = application.build()
-    application.add_handler(CommandHandler(["start", "help"], help_command))
+    application.add_handler(CommandHandler("help", help_command))
+    application.add_handler(CommandHandler("start", start_command))
     application.add_handler(
         MessageHandler(
             filters.Document.ALL,
@@ -49,6 +63,8 @@ def main(token: str, local: bool) -> None:
     )
     application.add_handler(CommandHandler("stats", stats))
     application.add_handler(CommandHandler("reset", reset))
+
+    application.add_handler(CallbackQueryHandler(callback_query_handler))
 
     logger.info("Bot is starting...")
     application.run_polling()

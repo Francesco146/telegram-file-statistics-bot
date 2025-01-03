@@ -1,11 +1,12 @@
 import os
 import mimetypes
 import humanize
-from telegram import Update
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes
 from .database import get_user_data, update_user_data
 from .archive_utils import handle_archive, is_archive
 from . import logger
+from .helper import get_send_function
 
 
 async def handle_file(
@@ -105,7 +106,15 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     message and sends it to the user. If an error occurs during this process, an error message
     is logged and a generic error message is sent to the user.
     """
+    keyboard = [
+        [InlineKeyboardButton("🏠 Home", callback_data="start")],
+        [InlineKeyboardButton("⌫ Reset Statistics", callback_data="reset")],
+        [InlineKeyboardButton("🆘 Help", callback_data="help")],
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
     try:
+        send = get_send_function(update)
         user_id = update.effective_user.id
         user_stats = get_user_data(user_id)
         file_count = str(user_stats["file_count"])
@@ -125,12 +134,14 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             msg += "<code>No files uploaded yet.</code>\n"
         else:
             for ext, count in user_stats["extension_categories"].items():
-                msg += f"<code>{ext}: {count} {"video" if count == 1 else "videos"}</code>\n"
+                msg += (
+                    f"<code>{ext}: {count} {"file" if count == 1 else "files"}</code>\n"
+                )
 
-        await update.message.reply_html(msg)
+        await send(msg, parse_mode="HTML", reply_markup=reply_markup)
     except Exception as e:
         logger.error("Error getting stats: %s", e)
-        await update.message.reply_text("Error getting statistics.")
+        await send("Error getting statistics.", reply_markup=reply_markup)
 
 
 async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -151,6 +162,13 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         None
     """
     user_id = update.effective_user.id
+    send = get_send_function(update)
+    keyboard = [
+        [InlineKeyboardButton("🏠 Home", callback_data="start")],
+        [InlineKeyboardButton("📊 View Statistics", callback_data="stats")],
+        [InlineKeyboardButton("🆘 Help", callback_data="help")],
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
     try:
         update_user_data(
             user_id,
@@ -162,10 +180,10 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 "extension_categories": {},
             },
         )
-        await update.message.reply_text("Statistics reset.")
+        await send("Statistics reset successfully.", reply_markup=reply_markup)
     except Exception as e:
         logger.error("Error resetting stats: %s", e)
-        await update.message.reply_text("Error resetting statistics.")
+        await send("Error resetting statistics.", reply_markup=reply_markup)
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -179,11 +197,71 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     Returns:
         None
     """
-    await update.message.reply_text(
+    send = get_send_function(update)
+    keyboard = [
+        [InlineKeyboardButton("🏠 Home", callback_data="start")],
+        [InlineKeyboardButton("📊 View Statistics", callback_data="stats")],
+        [InlineKeyboardButton("⌫ Reset Statistics", callback_data="reset")],
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await send(
         f"Welcome {update.effective_user.first_name} to the file monitoring bot! Here's what you can do:\n"
         "/start - Start the bot and get information on how to use it.\n"
         "/stats - View statistics on uploaded files.\n"
         "/reset - Reset the statistics.\n"
         "/help - Show this help message.\n"
-        "You can also send documents and receive summaries on their size and more."
+        "You can also send documents and receive summaries on their size and more.",
+        reply_markup=reply_markup,
     )
+
+
+async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Sends a home page message with buttons for available commands.
+
+    Args:
+        update (Update): Incoming update.
+        context (ContextTypes.DEFAULT_TYPE): The context of the update.
+
+    Returns:
+        None
+    """
+    keyboard = [
+        [InlineKeyboardButton("📊 View Statistics", callback_data="stats")],
+        [InlineKeyboardButton("⌫ Reset Statistics", callback_data="reset")],
+        [InlineKeyboardButton("🆘 Help", callback_data="help")],
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    send = get_send_function(update)
+
+    await send(
+        f"Welcome {update.effective_user.first_name} to the file monitoring bot! Use the buttons below to navigate.",
+        reply_markup=reply_markup,
+    )
+
+
+async def callback_query_handler(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    """
+    Handles callback queries triggered by inline buttons.
+
+    Args:
+        update (Update): The update object containing the callback query.
+        context (ContextTypes.DEFAULT_TYPE): The context object for the current conversation.
+    """
+    query = update.callback_query
+    await query.answer()  # Acknowledge the callback query to avoid a loading state in Telegram.
+
+    match query.data:
+        case "stats":
+            await stats(update, context)
+        case "reset":
+            await reset(update, context)
+        case "help":
+            await help_command(update, context)
+        case "start":
+            await start_command(update, context)
+        case _:
+            logger.warning("Unknown action: %s", query.data)
+            await query.edit_message_text("Unknown action. Please try again.")
