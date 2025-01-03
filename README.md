@@ -63,6 +63,8 @@ This is a Telegram bot that provides statistics about files sent by users. The b
     # For local server
     TELEGRAM_API_ID='your-telegram-api-id'
     TELEGRAM_API_HASH='your-telegram-api-hash'
+    # Default language is English
+    LANGUAGE_BOT='it'
     ```
 
 ## Usage
@@ -74,7 +76,8 @@ poetry run python main.py
 
 ## Commands
 
-- `/start` or `/help`: Show help message
+- `/start`: Show an home page
+- `/help`: Show help message
 - `/stats`: Show file statistics
 - `/reset`: Reset file statistics
 

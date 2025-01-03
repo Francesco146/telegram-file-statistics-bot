@@ -1,4 +1,9 @@
+from dotenv import load_dotenv
 import logging
+import gettext
+import os
+
+load_dotenv()
 
 
 class CustomFormatter(logging.Formatter):
@@ -35,3 +40,12 @@ ch.setLevel(logging.DEBUG)
 logger.addHandler(ch)
 
 __all__ = ["database", "args", "handlers"]
+
+match os.getenv("BOT_LANGUAGE"):
+    case "it":
+        it = gettext.translation("base", localedir="locales", languages=["it"])
+        it.install()
+        _ = it.gettext
+    case _:
+        # default language is english
+        _ = gettext.gettext
