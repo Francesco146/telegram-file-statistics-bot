@@ -21,6 +21,7 @@ This is a Telegram bot that provides statistics about files sent by users. The b
 - Identify streamable files (e.g., videos)
 - Categorize files by their extensions
 - Commands to view statistics and reset data
+- Localized, with support for some languages 
 
 ## Preview
 
