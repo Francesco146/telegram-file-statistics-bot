@@ -25,6 +25,7 @@ This is a Telegram bot that provides statistics about files sent by users. The b
 ## Preview
 
 <img src="imgs/stats.png" alt="stats"/>
+<img src="imgs/start.png" alt="start"/>
 <img src="imgs/zip_received.png" alt="zip_received"/>
 <img src="imgs/file_received.png" alt="file_received"/>
 <img src="imgs/help.png" alt="help"/>
