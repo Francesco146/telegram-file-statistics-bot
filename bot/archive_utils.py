@@ -6,7 +6,7 @@ import zipfile
 from telegram import Update
 from telegram.ext import ContextTypes
 from .database import get_user_data, update_user_data
-from . import logger, _
+from . import logger, get_str
 
 
 async def handle_archive(
@@ -60,15 +60,16 @@ async def handle_archive(
                     file_path = os.path.join(root, file)
                     file_size = os.path.getsize(file_path)
                     logger.debug(
-                        _("Processing file: '%s' (%s)"),
+                        get_str("Processing file: '%s' (%s)"),
                         file,
                         humanize.naturalsize(file_size),
                     )
+                    print("Here")
 
                     user_stats["total_size"] += file_size
                     user_stats["file_count"] += 1
 
-                    mime_type = mimetypes.guess_type(file)[0]
+                    mime_type, _ = mimetypes.guess_type(file)
                     if mime_type and mime_type.startswith("video"):
                         user_stats["streamable"] += 1
 
@@ -78,14 +79,14 @@ async def handle_archive(
 
                     update_user_data(user_id, user_stats)
                     await update.message.reply_text(
-                        f"{_("File received via archive")}: '{file}' ({humanize.naturalsize(file_size)})."
+                        f"{get_str("File received via archive")}: '{file}' ({humanize.naturalsize(file_size)})."
                     )
 
             user_stats["total_download_size"] += os.path.getsize(archive_absolute_path)
             update_user_data(user_id, user_stats)
     except Exception as e:
-        logger.error(_("Error handling zip file: %s"), e)
-        await update.message.reply_text(_("Error handling zip file."))
+        logger.error(get_str("Error handling zip file: %s"), e)
+        await update.message.reply_text(get_str("Error handling zip file."))
 
 
 def is_archive(file_name: str) -> bool:

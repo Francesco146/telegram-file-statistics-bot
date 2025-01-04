@@ -45,7 +45,7 @@ match os.getenv("BOT_LANGUAGE"):
     case "it":
         it = gettext.translation("base", localedir="locales", languages=["it"])
         it.install()
-        _ = it.gettext
+        get_str = it.gettext
     case _:
         # default language is english
-        _ = gettext.gettext
+        get_str = gettext.gettext

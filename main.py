@@ -17,7 +17,7 @@ from bot.handlers import (
     callback_query_handler,
 )
 from bot.database import init_db, Database
-from bot import logger, _
+from bot import logger, get_str
 import logging
 
 load_dotenv()
@@ -43,7 +43,7 @@ def main(token: str, local: bool) -> None:
     6. Logs that the bot is starting and runs the bot in polling mode.
     """
     if not token:
-        logger.error(_("Token not provided. Exiting..."))
+        logger.error(get_str("Token not provided. Exiting..."))
         return
 
     application = ApplicationBuilder().token(token).local_mode(local)
@@ -66,7 +66,7 @@ def main(token: str, local: bool) -> None:
 
     application.add_handler(CallbackQueryHandler(callback_query_handler))
 
-    logger.info(_("Bot is starting..."))
+    logger.info(get_str("Bot is starting..."))
     application.run_polling()
 
 
@@ -78,7 +78,7 @@ if __name__ == "__main__":
         logger.setLevel(logging.DEBUG)
 
     init_db()
-    logger.debug(_("Current configuration:"))
+    logger.debug(get_str("Current configuration:"))
     for arg in vars(args):
         if arg not in ["token"]:
             logger.debug(f"  * {arg}: {getattr(args, arg)}")
