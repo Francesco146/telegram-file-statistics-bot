@@ -62,7 +62,13 @@ async def handle_file(
                 humanize.naturalsize(file_size),
             )
             await handle_archive(update, context, file.file_id)
-            await update.message.reply_text(f"{_("Archive received")}: '{file_name}'.")
+            keyboard = [
+                [InlineKeyboardButton(STATS_LABEL, callback_data="stats")],
+            ]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            await update.message.reply_text(
+                f"{_("Archive received")}: '{file_name}'.", reply_markup=reply_markup
+            )
             return
 
         logger.debug(
@@ -85,8 +91,13 @@ async def handle_file(
         user_stats["extension_categories"][extension] += 1
 
         update_user_data(user_id, user_stats)
+        keyboard = [
+            [InlineKeyboardButton(STATS_LABEL, callback_data="stats")],
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
-            f"{_("File received")}: '{file_name}' ({humanize.naturalsize(file_size)})"
+            f"{_("File received")}: '{file_name}' ({humanize.naturalsize(file_size)})",
+            reply_markup=reply_markup,
         )
     except Exception as e:
         logger.error(_("Error handling file: %s"), e)
@@ -169,7 +180,6 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     send = get_send_function(update)
     keyboard = [
         [InlineKeyboardButton(HOME_LABEL, callback_data="start")],
-        [InlineKeyboardButton(STATS_LABEL, callback_data="stats")],
         [InlineKeyboardButton(HELP_LABEL, callback_data="help")],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
