@@ -1,4 +1,5 @@
 import argparse
+
 from . import get_str
 
 
@@ -16,6 +17,7 @@ def parse_args() -> argparse.Namespace:
     """
     parser = argparse.ArgumentParser(
         description=get_str("Telegram Bot for File Statistics"),
+        prog="telegram-file-statistics-bot",
         epilog=get_str("Made with ❤️ by @Francesco146"),
     )
     parser.add_argument(
@@ -43,7 +45,7 @@ def parse_args() -> argparse.Namespace:
         "-v",
         "--version",
         action="version",
-        version="telegram-file-statistics-bot v1.0.0",
+        version="telegram-file-statistics-bot v1.1.0",
         help=get_str("Show the version of the program"),
     )
     parser.add_argument(

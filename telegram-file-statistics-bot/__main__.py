@@ -1,29 +1,31 @@
-from dotenv import load_dotenv
-from bot.args import parse_args
+import logging
 import os
+
+from dotenv import load_dotenv
 from telegram.ext import (
     ApplicationBuilder,
+    CallbackQueryHandler,
     CommandHandler,
     MessageHandler,
     filters,
-    CallbackQueryHandler,
 )
-from bot.handlers import (
-    handle_file,
-    stats,
-    reset,
-    help_command,
-    start_command,
+
+from . import get_str, logger
+from .args import parse_args
+from .database import Database, init_db
+from .handlers import (
     callback_query_handler,
+    handle_file,
+    help_command,
+    reset,
+    start_command,
+    stats,
 )
-from bot.database import init_db, Database
-from bot import logger, get_str
-import logging
 
-load_dotenv()
+load_dotenv(override=True)
 
 
-def main(token: str, local: bool) -> None:
+def run_bot(token: str, local: bool) -> None:
     """
     Main function to start the bot application.
 
@@ -67,7 +69,12 @@ def main(token: str, local: bool) -> None:
     application.add_handler(CallbackQueryHandler(callback_query_handler))
 
     logger.info(get_str("Bot is starting..."))
-    application.run_polling()
+    try:
+        application.run_polling()
+    except Exception as e:
+        if local:
+            logger.error(get_str("Make sure the local server is running."))
+        logger.error(e)
 
 
 if __name__ == "__main__":
@@ -83,4 +90,4 @@ if __name__ == "__main__":
         if arg not in ["token"]:
             logger.debug(f"  * {arg}: {getattr(args, arg)}")
 
-    main(args.token or os.getenv("TOKEN"), args.local)
+    run_bot(args.token or os.getenv("TOKEN"), args.local)

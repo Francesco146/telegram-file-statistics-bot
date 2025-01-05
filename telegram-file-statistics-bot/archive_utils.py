@@ -1,12 +1,14 @@
-import os
 import mimetypes
+import os
 import tempfile
-import humanize
 import zipfile
+
+import humanize
 from telegram import Update
 from telegram.ext import ContextTypes
+
+from . import get_str, logger
 from .database import get_user_data, update_user_data
-from . import logger, get_str
 
 
 async def handle_archive(
@@ -64,7 +66,6 @@ async def handle_archive(
                         file,
                         humanize.naturalsize(file_size),
                     )
-                    print("Here")
 
                     user_stats["total_size"] += file_size
                     user_stats["file_count"] += 1

@@ -1,13 +1,14 @@
-import os
 import mimetypes
+import os
+
 import humanize
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes
-from .database import get_user_data, update_user_data
-from .archive_utils import handle_archive, is_archive
-from . import logger, get_str
-from .helper import get_send_function
 
+from . import get_str, logger
+from .archive_utils import handle_archive, is_archive
+from .database import get_user_data, update_user_data
+from .helper import get_send_function
 
 HOME_LABEL = get_str("🏠 Home")
 STATS_LABEL = get_str("📊 View Statistics")
@@ -266,7 +267,10 @@ async def callback_query_handler(
         context (ContextTypes.DEFAULT_TYPE): The context object for the current conversation.
     """
     query = update.callback_query
-    await query.answer()  # Acknowledge the callback query to avoid a loading state in Telegram.
+    try:
+        await query.answer()
+    except Exception as e:
+        logger.error(e)
 
     match query.data:
         case "stats":

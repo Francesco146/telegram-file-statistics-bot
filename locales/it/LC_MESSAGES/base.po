@@ -23,6 +23,10 @@ msgstr "Token non fornito. Uscita..."
 msgid "Bot is starting..."
 msgstr "Bot in avvio..."
 
+#: main.py:74
+msgid "Make sure the local server is running."
+msgstr "Assicurati che il server locale sia in esecuzione."
+
 #: main.py:83
 msgid "Current configuration:"
 msgstr "Configurazione attuale:"

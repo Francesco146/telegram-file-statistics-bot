@@ -1,9 +1,10 @@
-from dotenv import load_dotenv
-import logging
 import gettext
+import logging
 import os
 
-load_dotenv()
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
 
 
 class CustomFormatter(logging.Formatter):
