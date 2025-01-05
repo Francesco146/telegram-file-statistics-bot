@@ -3,17 +3,17 @@
 This is a Telegram bot that provides statistics about files sent by users. The bot can track the total size of files, the number of files, the number of streamable files (e.g., videos), and categorize files by their extensions.
 
 - [Telegram Bot for File Statistics](#telegram-bot-for-file-statistics)
-  - [Features](#features)
-  - [Preview](#preview)
-  - [Requirements](#requirements)
-  - [Installation](#installation)
-  - [Usage](#usage)
-  - [Commands](#commands)
-  - [License](#license)
-  - [Contributing](#contributing)
+  - [💪🏻 Features](#-features)
+  - [🖼️ Preview](#️-preview)
+  - [🚀 Requirements](#-requirements)
+  - [🧩 Installation](#-installation)
+  - [🪄 Usage](#-usage)
+  - [⭐ Commands](#-commands)
+  - [📜 License](#-license)
+  - [✨ Contributing](#-contributing)
 
 
-## Features
+## 💪🏻 Features
 
 - Track total file size
 - Track total download size
@@ -23,7 +23,7 @@ This is a Telegram bot that provides statistics about files sent by users. The b
 - Commands to view statistics and reset data
 - Localized, with support for some languages 
 
-## Preview
+## 🖼️ Preview
 
 <img src="imgs/stats.png" alt="stats"/>
 <img src="imgs/start.png" alt="start"/>
@@ -31,12 +31,12 @@ This is a Telegram bot that provides statistics about files sent by users. The b
 <img src="imgs/file_received.png" alt="file_received"/>
 <img src="imgs/help.png" alt="help"/>
 
-## Requirements
+## 🚀 Requirements
 
 - Python 3.13.1 or higher
 - [uv](https://github.com/astral-sh/uv) for dependency management
 
-## Installation
+## 🧩 Installation
 
 1. Clone the repository:
     ```sh
@@ -69,24 +69,24 @@ This is a Telegram bot that provides statistics about files sent by users. The b
     LANGUAGE_BOT='it'
     ```
 
-## Usage
+## 🪄 Usage
 
 Run the bot:
 ```sh
 uv run -m telegram-file-statistics-bot
 ```
 
-## Commands
+## ⭐ Commands
 
 - `/start`: Show an home page
 - `/help`: Show help message
 - `/stats`: Show file statistics
 - `/reset`: Reset file statistics
 
-## License
+## 📜 License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## Contributing
+## ✨ Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request for any changes.
