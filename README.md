@@ -51,7 +51,11 @@ This is a Telegram bot that provides statistics about files sent by users. The b
 
 3. Create a new virtual environment using uv:
     ```sh
-    uv venv && source .venv/bin/activate
+    uv venv
+    ```
+    and activate it:
+    ```sh
+    source .venv/bin/activate
     ```
 
 4. Install the required packages using uv
