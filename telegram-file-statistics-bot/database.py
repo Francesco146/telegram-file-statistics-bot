@@ -126,3 +126,23 @@ def update_user_data(user_id: int, data: dict) -> None:
     )
     conn.commit()
     conn.close()
+
+
+def is_stats_empty(user_id: int) -> bool:
+    """
+    Checks if the user's statistics are empty.
+
+    Returns:
+        bool: True if the user's statistics are empty, False otherwise.
+    """
+    # the user's statistics are empty if the total size, total download size, and file count are all 0
+    user_data = get_user_data(user_id)
+    return all(
+        [
+            user_data["total_size"] == 0,
+            user_data["total_download_size"] == 0,
+            user_data["file_count"] == 0,
+            user_data["streamable"] == 0,
+            not user_data["extension_categories"],
+        ]
+    )

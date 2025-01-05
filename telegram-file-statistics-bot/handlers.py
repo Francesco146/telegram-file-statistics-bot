@@ -7,7 +7,7 @@ from telegram.ext import ContextTypes
 
 from . import get_str, logger
 from .archive_utils import handle_archive, is_archive
-from .database import get_user_data, update_user_data
+from .database import get_user_data, is_stats_empty, update_user_data
 from .helper import get_send_function
 
 HOME_LABEL = get_str("🏠 Home")
@@ -127,7 +127,11 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
     keyboard = [
         [InlineKeyboardButton(HOME_LABEL, callback_data="start")],
-        [InlineKeyboardButton(RESET_LABEL, callback_data="reset")],
+        (
+            [InlineKeyboardButton(RESET_LABEL, callback_data="reset")]
+            if not is_stats_empty(update.effective_user.id)
+            else []
+        ),
         [InlineKeyboardButton(HELP_LABEL, callback_data="help")],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -217,7 +221,11 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     keyboard = [
         [InlineKeyboardButton(HOME_LABEL, callback_data="start")],
         [InlineKeyboardButton(STATS_LABEL, callback_data="stats")],
-        [InlineKeyboardButton(RESET_LABEL, callback_data="reset")],
+        (
+            [InlineKeyboardButton(RESET_LABEL, callback_data="reset")]
+            if not is_stats_empty(update.effective_user.id)
+            else []
+        ),
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await send(
@@ -244,7 +252,11 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     """
     keyboard = [
         [InlineKeyboardButton(STATS_LABEL, callback_data="stats")],
-        [InlineKeyboardButton(RESET_LABEL, callback_data="reset")],
+        (
+            [InlineKeyboardButton(RESET_LABEL, callback_data="reset")]
+            if not is_stats_empty(update.effective_user.id)
+            else []
+        ),
         [InlineKeyboardButton(HELP_LABEL, callback_data="help")],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
