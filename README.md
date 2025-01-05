@@ -34,7 +34,7 @@ This is a Telegram bot that provides statistics about files sent by users. The b
 ## Requirements
 
 - Python 3.13.1 or higher
-- Poetry for dependency management
+- [uv](https://github.com/astral-sh/uv) for dependency management
 
 ## Installation
 
@@ -44,19 +44,19 @@ This is a Telegram bot that provides statistics about files sent by users. The b
     cd telegram-file-statistics-bot
     ```
 
-2. Install Poetry if you haven't already:
+2. Install uv if you haven't already:
     ```sh
-    pip install poetry
+    pip install uv
     ```
 
-3. Create a new virtual environment using Poetry:
+3. Create a new virtual environment using uv:
     ```sh
-    poetry shell
+    uv venv
     ```
 
-4. Install the required packages using Poetry:
+4. Install the required packages using uv
     ```sh
-    poetry install
+    uv sync
     ```
 
 5. Create a `.env` file in the root directory and add your Telegram bot token:
@@ -73,7 +73,7 @@ This is a Telegram bot that provides statistics about files sent by users. The b
 
 Run the bot:
 ```sh
-poetry run python main.py
+uv run -m telegram-file-statistics-bot
 ```
 
 ## Commands
