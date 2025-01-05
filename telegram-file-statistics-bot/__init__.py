@@ -48,5 +48,9 @@ match os.getenv("BOT_LANGUAGE"):
         it.install()
         get_str = it.gettext
     case _:
-        # default language is english
+        if os.getenv("BOT_LANGUAGE") != "en":
+            logger.warning(
+                "Unsupported language '%s', defaulting to English",
+                os.getenv("BOT_LANGUAGE"),
+            )
         get_str = gettext.gettext
