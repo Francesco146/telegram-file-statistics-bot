@@ -1,3 +1,9 @@
+"""
+This module contains the handlers for various bot commands and messages.
+It includes functions to handle files, user statistics, and other
+bot interactions.
+"""
+
 import mimetypes
 import os
 
@@ -7,7 +13,7 @@ from telegram.ext import ContextTypes
 
 from . import get_str, logger
 from .archive_utils import handle_archive, is_archive
-from .database import get_user_data, is_stats_empty, update_user_data
+from .database import Database
 from .helper import get_send_function
 
 HOME_LABEL = get_str("🏠 Home")
@@ -92,7 +98,7 @@ async def handle_file(
             file_name,
             humanize.naturalsize(file_size or 0),
         )
-        user_stats = get_user_data(user_id)
+        user_stats = Database().get_user_data(user_id)
 
         user_stats["total_size"] += file_size
         user_stats["total_download_size"] += file_size
@@ -106,7 +112,7 @@ async def handle_file(
         user_stats["extension_categories"].setdefault(extension, 0)
         user_stats["extension_categories"][extension] += 1
 
-        update_user_data(user_id, user_stats)
+        Database().update_user_data(user_id, user_stats)
         keyboard = [
             [InlineKeyboardButton(STATS_LABEL, callback_data="stats")],
         ]
@@ -116,20 +122,18 @@ async def handle_file(
             f"({humanize.naturalsize(file_size or 0)})",
             reply_markup=reply_markup,
         )
-    except Exception as e:
+    except (OSError, ValueError) as e:
         logger.error(get_str("Error handling file: %s"), e)
         await update.message.reply_text(get_str("Error handling file."))
 
 
-async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def stats(update: Update) -> None:
     """
     Fetches and sends user statistics as a formatted HTML message.
 
     Args:
         - update (Update): The update object that contains information about
         the incoming update.
-        - context (ContextTypes.DEFAULT_TYPE): The context object that
-        contains data related to the current context.
 
     Returns:
         None
@@ -151,7 +155,7 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         [InlineKeyboardButton(HOME_LABEL, callback_data="start")],
         (
             [InlineKeyboardButton(RESET_LABEL, callback_data="reset")]
-            if not is_stats_empty(update.effective_user.id)
+            if not Database().is_stats_empty(update.effective_user.id)
             else []
         ),
         [InlineKeyboardButton(HELP_LABEL, callback_data="help")],
@@ -161,7 +165,7 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     try:
         user_id = update.effective_user.id
-        user_stats = get_user_data(user_id)
+        user_stats = Database().get_user_data(user_id)
         file_count = str(user_stats["file_count"])
         if int(file_count) > 1:
             file_count += get_str(" files")
@@ -198,7 +202,7 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 msg += "</code>\n"
 
         await send(msg, parse_mode="HTML", reply_markup=reply_markup)
-    except Exception as e:
+    except (OSError, ValueError) as e:
         logger.error(get_str("Error getting stats: %s"), e)
         await send(
             get_str("Error getting statistics."),
@@ -206,7 +210,7 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
 
 
-async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def reset(update: Update) -> None:
     """
     Resets the user's statistics to default values.
 
@@ -217,8 +221,6 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     Args:
         - update (Update): The update object that contains information about
         the incoming update.
-        - context (ContextTypes.DEFAULT_TYPE): The context object that contains
-        information about the current context.
 
     Returns:
         None
@@ -234,7 +236,7 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     try:
-        update_user_data(
+        Database().update_user_data(
             user_id,
             {
                 "total_size": 0,
@@ -248,7 +250,7 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             get_str("Statistics reset successfully."),
             reply_markup=reply_markup
         )
-    except Exception as e:
+    except (OSError, ValueError) as e:
         logger.error(get_str("Error resetting stats: %s"), e)
         await send(
             get_str("Error resetting statistics."),
@@ -256,16 +258,13 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
 
 
-async def help_command(
-    update: Update, context: ContextTypes.DEFAULT_TYPE
-) -> None:
+async def help_command(update: Update) -> None:
     """
     Sends a help message with a list of available commands and
     their descriptions.
 
     Args:
         update (Update): Incoming update.
-        context (ContextTypes.DEFAULT_TYPE): The context of the update.
 
     Returns:
         None
@@ -279,7 +278,7 @@ async def help_command(
         [InlineKeyboardButton(STATS_LABEL, callback_data="stats")],
         (
             [InlineKeyboardButton(RESET_LABEL, callback_data="reset")]
-            if not is_stats_empty(update.effective_user.id)
+            if not Database().is_stats_empty(update.effective_user.id)
             else []
         ),
     ]
@@ -300,15 +299,12 @@ async def help_command(
     )
 
 
-async def start_command(
-    update: Update, context: ContextTypes.DEFAULT_TYPE
-) -> None:
+async def start_command(update: Update) -> None:
     """
     Sends a home page message with buttons for available commands.
 
     Args:
         update (Update): Incoming update.
-        context (ContextTypes.DEFAULT_TYPE): The context of the update.
 
     Returns:
         None
@@ -320,7 +316,7 @@ async def start_command(
         [InlineKeyboardButton(STATS_LABEL, callback_data="stats")],
         (
             [InlineKeyboardButton(RESET_LABEL, callback_data="reset")]
-            if not is_stats_empty(update.effective_user.id)
+            if not Database().is_stats_empty(update.effective_user.id)
             else []
         ),
         [InlineKeyboardButton(HELP_LABEL, callback_data="help")],
@@ -338,16 +334,15 @@ async def start_command(
     )
 
 
-async def callback_query_handler(
-    update: Update, context: ContextTypes.DEFAULT_TYPE
-) -> None:
+async def callback_query_handler(update: Update) -> None:
     """
     Handles callback queries triggered by inline buttons.
 
     Args:
         - update (Update): The update object containing the callback query.
-        - context (ContextTypes.DEFAULT_TYPE): The context object for the
-        current conversation.
+
+    Returns:
+        None
     """
     query = update.callback_query
     if query is None:
@@ -355,18 +350,18 @@ async def callback_query_handler(
 
     try:
         await query.answer()
-    except Exception as e:
+    except (OSError, ValueError) as e:
         logger.error(e)
 
     match query.data:
         case "stats":
-            await stats(update, context)
+            await stats(update)
         case "reset":
-            await reset(update, context)
+            await reset(update)
         case "help":
-            await help_command(update, context)
+            await help_command(update)
         case "start":
-            await start_command(update, context)
+            await start_command(update)
         case _:
             logger.warning(get_str("Unknown action: %s"), query.data)
             await query.edit_message_text(

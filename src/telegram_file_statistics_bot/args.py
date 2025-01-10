@@ -1,3 +1,8 @@
+"""
+This module handles the parsing of command-line arguments for
+the Telegram Bot for File Statistics.
+"""
+
 import argparse
 
 from . import get_str

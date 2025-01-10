@@ -1,3 +1,8 @@
+"""
+This module initializes the telegram file statistics bot.
+It sets up environment variables and configures logging.
+"""
+
 import gettext
 import logging
 import os
@@ -8,6 +13,14 @@ load_dotenv(override=True, verbose=True)
 
 
 class CustomFormatter(logging.Formatter):
+    """Custom log formatter for the bot.
+
+    Args:
+        logging (logging.Formatter): The logging formatter class.
+
+    Returns:
+        logging.Formatter: A custom log formatter for the bot.
+    """
 
     grey = "\x1b[38;20m"
     yellow = "\x1b[33;20m"
