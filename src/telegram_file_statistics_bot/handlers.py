@@ -146,9 +146,9 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         [InlineKeyboardButton(HELP_LABEL, callback_data="help")],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
+    send = get_send_function(update)
 
     try:
-        send = get_send_function(update)
         user_id = update.effective_user.id
         user_stats = get_user_data(user_id)
         file_count = str(user_stats["file_count"])
