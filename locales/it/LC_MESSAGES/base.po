@@ -56,8 +56,8 @@ msgid "Made with ❤️ by @Francesco146"
 msgstr "Realizzato con ❤️ da @Francesco146"
 
 #: bot/args.py:25
-msgid "Bot token (or set TOKEN environment variable)"
-msgstr "Token del bot (o impostare la variabile d'ambiente TOKEN)"
+msgid "Bot token (or set TELEGRAM_TOKEN environment variable)"
+msgstr "Token del bot (o impostare la variabile d'ambiente TELEGRAM_TOKEN)"
 
 #: bot/args.py:32
 msgid "Path to the SQLite database file"

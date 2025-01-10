@@ -94,7 +94,7 @@ def main() -> None:
         if arg not in ["token"]:
             logger.debug(f"  * {arg}: {getattr(args, arg)}")
 
-    run_bot(args.token or os.getenv("TOKEN"), args.local)
+    run_bot(args.token or os.getenv("TELEGRAM_TOKEN"), args.local)
 
 
 if __name__ == "__main__":

@@ -33,7 +33,7 @@ This is a Telegram bot that provides statistics about files sent by users. The b
 
 ## 🚀 Requirements
 
-- Python 3.13.1 or higher
+- Python 3.10+
 - [uv](https://github.com/astral-sh/uv) for dependency management
 
 ## 🧩 Installation
@@ -65,7 +65,7 @@ This is a Telegram bot that provides statistics about files sent by users. The b
 
 5. Create a `.env` file in the root directory and add your Telegram bot token:
     ```env
-    TOKEN='your-telegram-bot-token'
+    TELEGRAM_TOKEN='your-telegram-bot-token'
     # For local server
     TELEGRAM_API_ID='your-telegram-api-id'
     TELEGRAM_API_HASH='your-telegram-api-hash'
@@ -77,7 +77,7 @@ This is a Telegram bot that provides statistics about files sent by users. The b
 
 Run the bot:
 ```sh
-uv run -m telegram-file-statistics-bot
+uv run -m telegram-file-statistics-bot [-h] [-t TOKEN] [-db DATABASE] [-d] [-v] [-l]
 ```
 
 ## ⭐ Commands

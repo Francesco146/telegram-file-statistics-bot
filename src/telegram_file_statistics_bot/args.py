@@ -11,7 +11,8 @@ def parse_args() -> argparse.Namespace:
         argparse.Namespace: A namespace object containing the parsed arguments.
 
     Arguments:
-        - -t, --token (str): Bot token (or set TOKEN environment variable).
+        - -t, --token (str): Bot token (or set TELEGRAM_TOKEN environment
+        variable).
         - -db, --database (str): Path to the SQLite database file
         (default is "file_statistics.db").
         - -d, --debug: Enable debug mode for logging.
@@ -25,7 +26,7 @@ def parse_args() -> argparse.Namespace:
         "-t",
         "--token",
         type=str,
-        help=get_str("Bot token (or set TOKEN environment variable)"),
+        help=get_str("Bot token (or set TELEGRAM_TOKEN environment variable)"),
         default=None,
     )
     parser.add_argument(
