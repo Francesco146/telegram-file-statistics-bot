@@ -30,18 +30,22 @@ async def handle_archive(
     6. Sends a message to the user for each file received.
     7. Updates the total download size of the archive in user statistics.
 
-    The difference between total size and total download size is that the total size
-    represents the cumulative size of all individual files, while the total download size
-    represents the size of the archive file itself. This one is useful to track the amount
-    of data that the user has to download in order to get the files.
+    The difference between total size and total download size is that
+    the total size represents the cumulative size of all individual files,
+    while the total download size represents the size of the archive file
+    itself. This one is useful to track the amount of data that the user has
+    to download in order to get the files.
 
     Args:
-        update (telegram.Update): The update object that contains information about the incoming update.
-        context (telegram.ext.CallbackContext): The context object that contains data related to the callback.
+        - update (telegram.Update): The update object that contains information
+        about the incoming update.
+        - context (telegram.ext.CallbackContext): The context object that
+        contains data related to the callback.
         file_id (str): The ID of the file to be processed.
 
     Raises:
-        Exception: If an error occurs during the processing of the archive file.
+        Exception: If an error occurs during the processing of the
+        archive file.
     """
     try:
         user_id = update.effective_user.id
@@ -52,7 +56,9 @@ async def handle_archive(
         split_path = file.file_path.split("/")
         # api/telegram-bot-api-data/<token>/documents/<file_name>
         base_dir = os.path.join("api/telegram-bot-api-data", split_path[-3])
-        archive_absolute_path = os.path.join(base_dir, split_path[-2], split_path[-1])
+        archive_absolute_path = os.path.join(
+            base_dir, split_path[-2], split_path[-1]
+        )
         with tempfile.TemporaryDirectory() as temp_dir:
             with zipfile.ZipFile(archive_absolute_path, "r") as archive_ref:
                 archive_ref.extractall(temp_dir)
@@ -80,10 +86,14 @@ async def handle_archive(
 
                     update_user_data(user_id, user_stats)
                     await update.message.reply_text(
-                        f"{get_str("File received via archive")}: '{file}' ({humanize.naturalsize(file_size)})."
+                        f"{get_str('File received via archive')}: '{file}' "
+                        f"({humanize.naturalsize(file_size)})."
                     )
 
-            user_stats["total_download_size"] += os.path.getsize(archive_absolute_path)
+            user_stats["total_download_size"] += os.path.getsize(
+                archive_absolute_path
+            )
+
             update_user_data(user_id, user_stats)
     except Exception as e:
         logger.error(get_str("Error handling zip file: %s"), e)
@@ -98,6 +108,7 @@ def is_archive(file_name: str) -> bool:
         file_name (str): The name of the file to check.
 
     Returns:
-        bool: True if the file name ends with an archive extension, False otherwise.
+        bool: True if the file name ends with an archive extension,
+        False otherwise.
     """
     return file_name.lower().endswith(("zip"))  # add more extensions if needed

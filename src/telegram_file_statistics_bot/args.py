@@ -11,9 +11,10 @@ def parse_args() -> argparse.Namespace:
         argparse.Namespace: A namespace object containing the parsed arguments.
 
     Arguments:
-        -t, --token (str): Bot token (or set TOKEN environment variable).
-        -db, --database (str): Path to the SQLite database file (default: "file_statistics.db").
-        -d, --debug: Enable debug mode for logging.
+        - -t, --token (str): Bot token (or set TOKEN environment variable).
+        - -db, --database (str): Path to the SQLite database file
+        (default is "file_statistics.db").
+        - -d, --debug: Enable debug mode for logging.
     """
     parser = argparse.ArgumentParser(
         description=get_str("Telegram Bot for File Statistics"),

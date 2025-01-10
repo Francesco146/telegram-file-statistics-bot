@@ -223,3 +223,8 @@ msgstr "Azione sconosciuta: %s"
 msgid "Unknown action. Please try again."
 msgstr "Azione sconosciuta. Riprova."
 
+msgid "video"
+msgstr "video"
+
+msgid "videos"
+msgstr "video"

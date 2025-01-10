@@ -20,12 +20,16 @@ async def handle_file(
     update: Update, context: ContextTypes.DEFAULT_TYPE, local_mode: bool
 ) -> None:
     """
-    Handles an incoming file from a user, updates user statistics, and sends a confirmation message.
+    Handles an incoming file from a user, updates user statistics, and sends a
+    confirmation message.
 
     Args:
-        update (Update): The update object containing the message and user information.
-        context (ContextTypes.DEFAULT_TYPE): The context object for the current conversation.
-        local_mode (bool): A flag indicating whether the bot is running in local mode.
+        - update (Update): The update object containing the message and
+        user information.
+        - context (ContextTypes.DEFAULT_TYPE): The context object for the
+        current conversation.
+        - local_mode (bool): A flag indicating whether the bot is
+        running in local mode.
 
     Raises:
         Exception: If there is an error during file handling.
@@ -51,11 +55,13 @@ async def handle_file(
                 await update.message.reply_text(
                     get_str("Archives are not supported in non-local mode.")
                 )
-                logger.warning(get_str("Archives are not supported in non-local mode."))
+                logger.warning(
+                    get_str("Archives are not supported in non-local mode."))
                 return
 
             await update.message.reply_text(
-                f"{get_str("Processing archive")}: '{file_name}'... {get_str("This may take some time.")}"
+                f"{get_str('Processing archive')}: '{file_name}'... "
+                f"{get_str('This may take some time.')}"
             )
             logger.debug(
                 f"{get_str("Processing archive")}: '%s' (%s)",
@@ -98,7 +104,8 @@ async def handle_file(
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
-            f"{get_str("File received")}: '{file_name}' ({humanize.naturalsize(file_size)})",
+            f"{get_str('File received')}: '{file_name}' "
+            f"({humanize.naturalsize(file_size)})",
             reply_markup=reply_markup,
         )
     except Exception as e:
@@ -111,19 +118,23 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     Fetches and sends user statistics as a formatted HTML message.
 
     Args:
-        update (Update): The update object that contains information about the incoming update.
-        context (ContextTypes.DEFAULT_TYPE): The context object that contains data related to the current context.
+        - update (Update): The update object that contains information about
+        the incoming update.
+        - context (ContextTypes.DEFAULT_TYPE): The context object that
+        contains data related to the current context.
 
     Returns:
         None
 
     Raises:
-        Exception: If there is an error while fetching or sending the user statistics.
+        Exception: If there is an error while fetching or sending
+        the user statistics.
 
-    The function retrieves the user statistics such as total file size, total download size, number of files uploaded,
-    number of streamable videos, and file extensions. It formats these statistics into an HTML
-    message and sends it to the user. If an error occurs during this process, an error message
-    is logged and a generic error message is sent to the user.
+    The function retrieves the user statistics such as total file size,
+    total download size, number of files uploaded, number of streamable videos,
+    and file extensions. It formats these statistics into an HTML message and
+    sends it to the user. If an error occurs during this process, an error
+    message is logged and a generic error message is sent to the user.
     """
     keyboard = [
         [InlineKeyboardButton(HOME_LABEL, callback_data="start")],
@@ -147,22 +158,41 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             file_count += get_str(" file")
 
         msg = (
-            f"{get_str("Total file size")}: <code>{humanize.naturalsize(user_stats['total_size'])}</code>\n"
-            f"{get_str("Total download size")}: <code>{humanize.naturalsize(user_stats['total_download_size'])}</code>\n"
-            f"{get_str("Number of files uploaded")}: <code>{file_count}</code>\n"
-            f"{get_str("Streamable files")}: <code>{user_stats['streamable']} {get_str("videos") if user_stats['streamable'] > 1 else get_str('video')}</code>\n"
-            f"{get_str("Extensions")}:\n"
+            f"{get_str('Total file size')}: "
+            f"<code>{humanize.naturalsize(user_stats['total_size'])}</code>\n"
+            f"{get_str('Total download size')}: "
+            f"<code>{humanize.naturalsize(user_stats['total_download_size'])}"
+            f"</code>\n"
+            f"{get_str('Number of files uploaded')}: <code>{file_count}"
+            f"</code>\n"
+            f"{get_str('Streamable files')}: "
+            f"<code>{user_stats['streamable']} "
         )
+
+        if user_stats["streamable"] > 1:
+            msg += f"{get_str('videos')}</code>\n"
+        else:
+            msg += f"{get_str('video')}</code>\n"
+
+        msg += f"{get_str('Extensions')}:\n"
         if not user_stats["extension_categories"]:
             msg += f"<code>{get_str("No files uploaded yet.")}</code>\n"
         else:
             for ext, count in user_stats["extension_categories"].items():
-                msg += f"<code>{ext}: {count} {get_str("file") if count == 1 else get_str("files")}</code>\n"
+                msg += f"<code>{ext}: {count} "
+                if count == 1:
+                    msg += get_str("file")
+                else:
+                    msg += get_str("files")
+                msg += "</code>\n"
 
         await send(msg, parse_mode="HTML", reply_markup=reply_markup)
     except Exception as e:
         logger.error(get_str("Error getting stats: %s"), e)
-        await send(get_str("Error getting statistics."), reply_markup=reply_markup)
+        await send(
+            get_str("Error getting statistics."),
+            reply_markup=reply_markup
+        )
 
 
 async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -174,10 +204,10 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     exception occurs.
 
     Args:
-        update (Update): The update object that contains information about the
-                         incoming update.
-        context (ContextTypes.DEFAULT_TYPE): The context object that contains
-                                             information about the current context.
+        - update (Update): The update object that contains information about
+        the incoming update.
+        - context (ContextTypes.DEFAULT_TYPE): The context object that contains
+        information about the current context.
 
     Returns:
         None
@@ -200,15 +230,24 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 "extension_categories": {},
             },
         )
-        await send(get_str("Statistics reset successfully."), reply_markup=reply_markup)
+        await send(
+            get_str("Statistics reset successfully."),
+            reply_markup=reply_markup
+        )
     except Exception as e:
         logger.error(get_str("Error resetting stats: %s"), e)
-        await send(get_str("Error resetting statistics."), reply_markup=reply_markup)
+        await send(
+            get_str("Error resetting statistics."),
+            reply_markup=reply_markup
+        )
 
 
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def help_command(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
     """
-    Sends a help message with a list of available commands and their descriptions.
+    Sends a help message with a list of available commands and
+    their descriptions.
 
     Args:
         update (Update): Incoming update.
@@ -229,17 +268,24 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await send(
-        f"{get_str('Welcome')} {update.effective_user.first_name} {get_str('to the file monitoring bot! Here\'s what you can do:')}\n"
-        f"/start - {get_str("Start the bot and get information on how to use it.")}\n"
-        f"/stats - {get_str("View statistics on uploaded files.")}\n"
-        f"/reset - {get_str("Reset the statistics.")}\n"
-        f"/help - {get_str("Show this help message.")}\n"
-        f"{get_str("You can also send documents and receive summaries on their size and more.")}",
+        f"{get_str('Welcome')} {update.effective_user.first_name} "
+        f"{get_str('to the file monitoring bot! Here\'s what you can do:')}\n"
+        "/start - "
+        f"{get_str('Start the bot and get information on how to use it.')}\n"
+        f"/stats - {get_str('View statistics on uploaded files.')}\n"
+        f"/reset - {get_str('Reset the statistics.')}\n"
+        f"/help - {get_str('Show this help message.')}\n"
+        f"{get_str(
+            "You can also send documents and receive summaries "
+            "on their size and more."
+        )}",
         reply_markup=reply_markup,
     )
 
 
-async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def start_command(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
     """
     Sends a home page message with buttons for available commands.
 
@@ -263,7 +309,11 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     send = get_send_function(update)
 
     await send(
-        f"{get_str('Welcome')} {update.effective_user.first_name} {get_str('to the file monitoring bot! Use the buttons below to navigate.')}",
+        f"{get_str('Welcome')} {update.effective_user.first_name} "
+        f"{get_str(
+            "to the file monitoring bot! "
+            "Use the buttons below to navigate."
+        )}",
         reply_markup=reply_markup,
     )
 
@@ -275,8 +325,9 @@ async def callback_query_handler(
     Handles callback queries triggered by inline buttons.
 
     Args:
-        update (Update): The update object containing the callback query.
-        context (ContextTypes.DEFAULT_TYPE): The context object for the current conversation.
+        - update (Update): The update object containing the callback query.
+        - context (ContextTypes.DEFAULT_TYPE): The context object for the
+        current conversation.
     """
     query = update.callback_query
     try:
@@ -295,4 +346,6 @@ async def callback_query_handler(
             await start_command(update, context)
         case _:
             logger.warning(get_str("Unknown action: %s"), query.data)
-            await query.edit_message_text(get_str("Unknown action. Please try again."))
+            await query.edit_message_text(
+                get_str("Unknown action. Please try again.")
+            )

@@ -27,8 +27,10 @@ def run_bot(token: str, local: bool) -> None:
     Main function to start the bot application.
 
     Args:
-        token (str): The token for authenticating the bot with the Telegram API.
-        local (bool): A flag indicating whether the bot should run with a telegram api bot local server.
+        - token (str): The token for authenticating the bot with the
+        Telegram API.
+        - local (bool): A flag indicating whether the bot should run with
+        a telegram api bot local server.
 
     Returns:
         None
@@ -49,7 +51,8 @@ def run_bot(token: str, local: bool) -> None:
     if local:
         application.base_url("http://0.0.0.0:8081/bot")
         application.base_file_url("http://0.0.0.0:8081/file/bot")
-        application.read_timeout(1000)  # high value for large files in local mode
+        # high value for large files in local mode
+        application.read_timeout(1000)
 
     application = application.build()
     application.add_handler(CommandHandler("help", help_command))
@@ -86,6 +89,7 @@ def main() -> None:
 
     init_db()
     logger.debug(get_str("Current configuration:"))
+    logger.debug(f"  * language: {os.getenv('BOT_LANGUAGE', 'en')}")
     for arg in vars(args):
         if arg not in ["token"]:
             logger.debug(f"  * {arg}: {getattr(args, arg)}")
