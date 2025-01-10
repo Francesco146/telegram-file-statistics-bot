@@ -9,6 +9,7 @@ This is a Telegram bot that provides statistics about files sent by users. The b
   - [🧩 Installation](#-installation)
   - [🪄 Usage](#-usage)
   - [⭐ Commands](#-commands)
+  - [🗑️ Uninstall](#️-uninstall)
   - [📜 License](#-license)
   - [✨ Contributing](#-contributing)
 
@@ -63,7 +64,12 @@ This is a Telegram bot that provides statistics about files sent by users. The b
     uv sync
     ```
 
-5. Create a `.env` file in the root directory and add your Telegram bot token:
+5. Install the bot:
+    ```sh
+    uv run pip install .
+    ```
+
+6. Create a `.env` file in the root directory and add your Telegram bot token:
     ```env
     TELEGRAM_TOKEN='your-telegram-bot-token'
     # For local server
@@ -77,7 +83,7 @@ This is a Telegram bot that provides statistics about files sent by users. The b
 
 Run the bot:
 ```sh
-uv run -m telegram-file-statistics-bot [-h] [-t TOKEN] [-db DATABASE] [-d] [-v] [-l]
+telegram-file-statistics-bot [-h] [-t TOKEN] [-db DATABASE] [-d] [-v] [-l]
 ```
 
 ## ⭐ Commands
@@ -86,6 +92,13 @@ uv run -m telegram-file-statistics-bot [-h] [-t TOKEN] [-db DATABASE] [-d] [-v] 
 - `/help`: Show help message
 - `/stats`: Show file statistics
 - `/reset`: Reset file statistics
+
+## 🗑️ Uninstall
+
+To uninstall the bot, run:
+```sh
+uv run pip uninstall telegram-file-statistics-bot
+```
 
 ## 📜 License
 
