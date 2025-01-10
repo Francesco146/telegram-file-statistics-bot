@@ -1,153 +1,156 @@
+"""
+This module provides database functionalities for
+the Telegram Bot for File Statistics. It includes classes and
+functions to interact with the SQLite database.
+"""
+
 import json
 import sqlite3
+from typing import Dict
+
+from . import get_str
 
 
 class Database:
     """
-    A class used to represent the Database through a file path.
+    A singleton class to interact with the SQLite database for the
+    Telegram Bot for File Statistics.
 
-    Attributes
+    Attributes:
     ----------
     db_path : str
         The file path to the database.
     """
 
-    db_path: str
+    _instance = None
+    db_path = ""
 
+    def __new__(cls, db_path: str | None = None):
+        """
+        Ensures that only one instance of the Database class
+        is created (Singleton pattern).
 
-def init_db() -> None:
-    """
-    Initializes the database by creating the 'user_data' table if
-    it does not already exist.
+        Args:
+            db_path (str): The file path to the SQLite database.
 
-    The 'user_data' table has the following columns:
-    - user_id: INTEGER, primary key
-    - total_size: INTEGER, default value is 0
-    - total_download_size: INTEGER, default value is 0
-    - file_count: INTEGER, default value is 0
-    - streamable: INTEGER, default value is 0
-    - extension_categories: TEXT, default value is '{}'
+        Returns:
+            Database: The singleton instance of the Database class.
+        """
+        if not cls._instance and not db_path:
+            raise ValueError(get_str("Database path not set."))
 
-    This function connects to the database, executes the SQL command
-    to create the table, commits the changes, and then closes the connection.
-    """
-    conn = sqlite3.connect(Database.db_path)
-    cursor = conn.cursor()
-    cursor.execute(
-        """CREATE TABLE IF NOT EXISTS user_data (
-            user_id INTEGER PRIMARY KEY,
-            total_size INTEGER DEFAULT 0,
-            total_download_size INTEGER DEFAULT 0,
-            file_count INTEGER DEFAULT 0,
-            streamable INTEGER DEFAULT 0,
-            extension_categories TEXT DEFAULT '{}'
-        )"""
-    )
-    conn.commit()
-    conn.close()
+        if cls._instance is None:
+            cls._instance = super(Database, cls).__new__(cls)
+            cls._instance.db_path = db_path
+        return cls._instance
 
+    def _connect(self):
+        """
+        Establishes a connection to the SQLite database.
 
-def get_user_data(user_id: int) -> dict:
-    """
-    Retrieve user data from the database based on the given user ID.
+        Returns:
+            sqlite3.Connection: SQLite database connection object.
+        """
+        return sqlite3.connect(self.db_path)
 
-    Args:
-        user_id (int): The ID of the user whose data is to be retrieved.
+    def init_db(self) -> None:
+        """
+        Initializes the database by creating the `user_data` table
+        if it does not already exist.
+        """
+        with self._connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """CREATE TABLE IF NOT EXISTS user_data (
+                    user_id INTEGER PRIMARY KEY,
+                    total_size INTEGER DEFAULT 0,
+                    total_download_size INTEGER DEFAULT 0,
+                    file_count INTEGER DEFAULT 0,
+                    streamable INTEGER DEFAULT 0,
+                    extension_categories TEXT DEFAULT '{}'
+                )"""
+            )
+            conn.commit()
 
-    Returns:
-        dict: A dictionary containing the user's data with the following keys:
-        - "total_size" (int): The total size of the user's files.
-        - "total_download_size" (int): The total size that the user needs
-        to download.
-        - "file_count" (int): The number of files the user has.
-        - "streamable" (int): The number of streamable files the user has.
-        - "extension_categories" (dict): A dictionary of file extension
-        categories.
+    def get_user_data(self, user_id: int) -> Dict:
+        """
+        Retrieves user data from the database based on the given user ID.
 
-        If the user data is not found, returns a dictionary with default
-        values:
-        - "total_size": 0
-        - "total_download_size": 0
-        - "file_count": 0
-        - "streamable": 0
-        - "extension_categories": {}
-    """
-    conn = sqlite3.connect(Database.db_path)
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM user_data WHERE user_id=?", (user_id,))
-    row = cursor.fetchone()
-    conn.close()
-    if not row:
+        Args:
+            user_id (int): The ID of the user whose data is to be retrieved.
+
+        Returns:
+            Dict[str, int | Dict[str, int]]: A dictionary containing
+            the user's data with default values if no data is found.
+        """
+        with self._connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT * FROM user_data WHERE user_id=?", (user_id,))
+            row = cursor.fetchone()
+
+        if not row:
+            return {
+                "total_size": 0,
+                "total_download_size": 0,
+                "file_count": 0,
+                "streamable": 0,
+                "extension_categories": {},
+            }
         return {
-            "total_size": 0,
-            "total_download_size": 0,
-            "file_count": 0,
-            "streamable": 0,
-            "extension_categories": {},
+            "total_size": row[1],
+            "total_download_size": row[2],
+            "file_count": row[3],
+            "streamable": row[4],
+            "extension_categories": json.loads(row[5]),
         }
-    return {
-        "total_size": row[1],
-        "total_download_size": row[2],
-        "file_count": row[3],
-        "streamable": row[4],
-        "extension_categories": json.loads(row[5]),
-    }
 
+    def update_user_data(
+        self, user_id: int, data: Dict
+    ) -> None:
+        """
+        Updates the user data in the database.
 
-def update_user_data(user_id: int, data: dict) -> None:
-    """
-    Updates the user data in the database.
+        Args:
+            - user_id (int): The ID of the user.
+            - data (Dict[str, int | Dict[str, int]]): A dictionary containing
+            the user data to be updated.
+        """
+        with self._connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """INSERT OR REPLACE INTO user_data
+                   (user_id, total_size, total_download_size,
+                   file_count, streamable, extension_categories)
+                   VALUES (?, ?, ?, ?, ?, ?)""",
+                (
+                    user_id,
+                    data["total_size"],
+                    data["total_download_size"],
+                    data["file_count"],
+                    data["streamable"],
+                    json.dumps(data["extension_categories"]),
+                ),
+            )
+            conn.commit()
 
-    This function inserts or replaces a record in the `user_data` table with
-    the provided user ID and data. The data dictionary should contain
-    the following keys:
-    - "total_size": The total size of the user's data.
-    - "total_download_size": The total size that the user needs to download.
-    - "file_count": The number of files associated with the user.
-    - "streamable": A boolean indicating if the data is streamable.
-    - "extension_categories": A dictionary of file extension categories.
+    def is_stats_empty(self, user_id: int) -> bool:
+        """
+        Checks if the user's statistics are empty.
 
-    Args:
-        user_id (int): The ID of the user.
-        data (dict): A dictionary containing the user data to be updated.
+        Args:
+            user_id (int): The ID of the user.
 
-    Returns:
-        None
-    """
-    conn = sqlite3.connect(Database.db_path)
-    cursor = conn.cursor()
-    cursor.execute(
-        """INSERT OR REPLACE INTO user_data
-           (user_id, total_size, total_download_size,
-           file_count, streamable, extension_categories)
-           VALUES (?, ?, ?, ?, ?, ?)""",
-        (
-            user_id,
-            data["total_size"],
-            data["total_download_size"],
-            data["file_count"],
-            data["streamable"],
-            json.dumps(data["extension_categories"]),
-        ),
-    )
-    conn.commit()
-    conn.close()
-
-
-def is_stats_empty(user_id: int) -> bool:
-    """
-    Checks if the user's statistics are empty.
-
-    Returns:
-        bool: True if the user's statistics are empty, False otherwise.
-    """
-    user_data = get_user_data(user_id)
-    return all(
-        [
-            user_data["total_size"] == 0,
-            user_data["total_download_size"] == 0,
-            user_data["file_count"] == 0,
-            user_data["streamable"] == 0,
-            not user_data["extension_categories"],
-        ]
-    )
+        Returns:
+            bool: True if the user's statistics are empty, False otherwise.
+        """
+        user_data = self.get_user_data(user_id)
+        return all(
+            [
+                user_data["total_size"] == 0,
+                user_data["total_download_size"] == 0,
+                user_data["file_count"] == 0,
+                user_data["streamable"] == 0,
+                not user_data["extension_categories"],
+            ]
+        )

@@ -1,3 +1,8 @@
+"""
+This module provides helper functions for the
+Telegram Bot for File Statistics.
+"""
+
 from typing import Callable
 
 from telegram import Update
@@ -21,10 +26,9 @@ def get_send_function(update: Update) -> Callable:
     """
     if update.callback_query:
         return update.callback_query.edit_message_text
-    else:
-        if update.message:
-            return update.message.reply_text
-        else:
-            raise ValueError(
-                get_str("Update does not contain a message or callback query")
-            )
+    if update.message:
+        return update.message.reply_text
+
+    raise ValueError(
+        get_str("Update does not contain a message or callback query")
+    )

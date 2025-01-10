@@ -234,3 +234,6 @@ msgstr "Il percorso del file è nullo"
 
 msgid "Update does not contain a message or callback query"
 msgstr "L'aggiornamento non contiene un messaggio o una query di richiamo"
+
+msgid "Database path not set."
+msgstr "Percorso del database non impostato."

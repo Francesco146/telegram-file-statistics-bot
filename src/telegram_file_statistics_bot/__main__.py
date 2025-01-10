@@ -1,3 +1,8 @@
+"""
+This module serves as the entry point for the telegram file statistics bot.
+It initializes and runs the bot application.
+"""
+
 import logging
 import os
 
@@ -11,7 +16,7 @@ from telegram.ext import (
 
 from . import get_str, logger
 from .args import parse_args
-from .database import Database, init_db
+from .database import Database
 from .handlers import (
     callback_query_handler,
     handle_file,
@@ -48,6 +53,7 @@ def run_bot(token: str, local: bool) -> None:
         return
 
     application = ApplicationBuilder().token(token).local_mode(local)
+
     if local:
         application.base_url("http://0.0.0.0:8081/bot")
         application.base_file_url("http://0.0.0.0:8081/file/bot")
@@ -55,23 +61,45 @@ def run_bot(token: str, local: bool) -> None:
         application.read_timeout(1000)
 
     application = application.build()
-    application.add_handler(CommandHandler("help", help_command))
-    application.add_handler(CommandHandler("start", start_command))
+
+    application.add_handler(
+        CommandHandler(
+            "help", lambda update, _: help_command(update)
+        )
+    )
+    application.add_handler(
+        CommandHandler(
+            "start", lambda update, _: start_command(update)
+        )
+    )
     application.add_handler(
         MessageHandler(
             filters.Document.ALL,
             lambda update, context: handle_file(update, context, local),
         )
     )
-    application.add_handler(CommandHandler("stats", stats))
-    application.add_handler(CommandHandler("reset", reset))
-
-    application.add_handler(CallbackQueryHandler(callback_query_handler))
+    application.add_handler(
+        CommandHandler(
+            "stats",
+            lambda update, _: stats(update)
+        )
+    )
+    application.add_handler(
+        CommandHandler(
+            "reset",
+            lambda update, _: reset(update)
+        )
+    )
+    application.add_handler(
+        CallbackQueryHandler(
+            lambda update, _: callback_query_handler(update)
+        )
+    )
 
     logger.info(get_str("Bot is starting..."))
     try:
         application.run_polling()
-    except Exception as e:
+    except (ConnectionError, TimeoutError) as e:
         if local:
             logger.error(get_str("Make sure the local server is running."))
         logger.error(e)
@@ -82,17 +110,19 @@ def main() -> None:
     Entry point for the bot when called from a script or CLI.
     """
     args = parse_args()
-    Database.db_path = args.database
+
+    sqlite_db = Database(args.database)
 
     if args.debug:
         logger.setLevel(logging.DEBUG)
 
-    init_db()
+    sqlite_db.init_db()
+
     logger.debug(get_str("Current configuration:"))
-    logger.debug(f"  * language: {os.getenv('BOT_LANGUAGE', 'en')}")
+    logger.debug("  * language: %s", os.getenv('BOT_LANGUAGE', 'en'))
     for arg in vars(args):
         if arg not in ["token"]:
-            logger.debug(f"  * {arg}: {getattr(args, arg)}")
+            logger.debug("  * %s: %s", arg, getattr(args, arg))
 
     run_bot(args.token or os.getenv("TELEGRAM_TOKEN", ""), args.local)
 
