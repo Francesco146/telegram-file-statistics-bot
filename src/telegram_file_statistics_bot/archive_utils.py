@@ -47,11 +47,19 @@ async def handle_archive(
         Exception: If an error occurs during the processing of the
         archive file.
     """
+    if update.effective_user is None:
+        return
+    if update.message is None:
+        return
+
     try:
         user_id = update.effective_user.id
         user_stats = get_user_data(user_id)
 
         file = await context.bot.get_file(file_id)
+
+        if file.file_path is None:
+            raise ValueError(get_str("File path is None"))
 
         split_path = file.file_path.split("/")
         # api/telegram-bot-api-data/<token>/documents/<file_name>

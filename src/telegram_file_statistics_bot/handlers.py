@@ -44,13 +44,21 @@ async def handle_file(
     7. Sends a confirmation message to the user with the file name and size.
     8. Logs and sends an error message if an exception occurs.
     """
+    if update.effective_user is None:
+        return
+    if update.message is None:
+        return
+    if update.message.document is None:
+        return
+
     try:
+
         user_id = update.effective_user.id
         file = update.message.document
         file_size = file.file_size
         file_name = file.file_name
 
-        if is_archive(file_name):
+        if file_name and is_archive(file_name):
             if not local_mode:
                 await update.message.reply_text(
                     get_str("Archives are not supported in non-local mode.")
@@ -66,7 +74,7 @@ async def handle_file(
             logger.debug(
                 f"{get_str("Processing archive")}: '%s' (%s)",
                 file_name,
-                humanize.naturalsize(file_size),
+                humanize.naturalsize(file_size or 0),
             )
             await handle_archive(update, context, file.file_id)
             keyboard = [
@@ -82,7 +90,7 @@ async def handle_file(
         logger.debug(
             f"{get_str("Processing file")}: '%s' (%s)",
             file_name,
-            humanize.naturalsize(file_size),
+            humanize.naturalsize(file_size or 0),
         )
         user_stats = get_user_data(user_id)
 
@@ -90,11 +98,11 @@ async def handle_file(
         user_stats["total_download_size"] += file_size
         user_stats["file_count"] += 1
 
-        mime_type, _ = mimetypes.guess_type(file_name)
+        mime_type, _ = mimetypes.guess_type(file_name or "")
         if mime_type and mime_type.startswith("video"):
             user_stats["streamable"] += 1
 
-        extension = os.path.splitext(file_name)[1].lower()
+        extension = os.path.splitext(file_name or "")[1].lower()
         user_stats["extension_categories"].setdefault(extension, 0)
         user_stats["extension_categories"][extension] += 1
 
@@ -105,7 +113,7 @@ async def handle_file(
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
             f"{get_str('File received')}: '{file_name}' "
-            f"({humanize.naturalsize(file_size)})",
+            f"({humanize.naturalsize(file_size or 0)})",
             reply_markup=reply_markup,
         )
     except Exception as e:
@@ -136,6 +144,9 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     sends it to the user. If an error occurs during this process, an error
     message is logged and a generic error message is sent to the user.
     """
+    if update.effective_user is None:
+        return
+
     keyboard = [
         [InlineKeyboardButton(HOME_LABEL, callback_data="start")],
         (
@@ -212,6 +223,9 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     Returns:
         None
     """
+    if update.effective_user is None:
+        return
+
     user_id = update.effective_user.id
     send = get_send_function(update)
     keyboard = [
@@ -256,6 +270,9 @@ async def help_command(
     Returns:
         None
     """
+    if update.effective_user is None:
+        return
+
     send = get_send_function(update)
     keyboard = [
         [InlineKeyboardButton(HOME_LABEL, callback_data="start")],
@@ -296,6 +313,9 @@ async def start_command(
     Returns:
         None
     """
+    if update.effective_user is None:
+        return
+
     keyboard = [
         [InlineKeyboardButton(STATS_LABEL, callback_data="stats")],
         (
@@ -330,6 +350,9 @@ async def callback_query_handler(
         current conversation.
     """
     query = update.callback_query
+    if query is None:
+        return
+
     try:
         await query.answer()
     except Exception as e:

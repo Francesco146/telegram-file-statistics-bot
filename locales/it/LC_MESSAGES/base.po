@@ -228,3 +228,9 @@ msgstr "video"
 
 msgid "videos"
 msgstr "video"
+
+msgid "File path is None"
+msgstr "Il percorso del file è nullo"
+
+msgid "Update does not contain a message or callback query"
+msgstr "L'aggiornamento non contiene un messaggio o una query di richiamo"
