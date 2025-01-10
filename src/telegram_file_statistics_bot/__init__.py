@@ -4,7 +4,7 @@ import os
 
 from dotenv import load_dotenv
 
-load_dotenv(override=True)
+load_dotenv(override=True, verbose=True)
 
 
 class CustomFormatter(logging.Formatter):

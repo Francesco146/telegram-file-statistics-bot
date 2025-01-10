@@ -1,7 +1,6 @@
 import logging
 import os
 
-from dotenv import load_dotenv
 from telegram.ext import (
     ApplicationBuilder,
     CallbackQueryHandler,
@@ -21,8 +20,6 @@ from .handlers import (
     start_command,
     stats,
 )
-
-load_dotenv(override=True)
 
 
 def run_bot(token: str, local: bool) -> None:
@@ -77,7 +74,10 @@ def run_bot(token: str, local: bool) -> None:
         logger.error(e)
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """
+    Entry point for the bot when called from a script or CLI.
+    """
     args = parse_args()
     Database.db_path = args.database
 
@@ -91,3 +91,7 @@ if __name__ == "__main__":
             logger.debug(f"  * {arg}: {getattr(args, arg)}")
 
     run_bot(args.token or os.getenv("TOKEN"), args.local)
+
+
+if __name__ == "__main__":
+    main()
