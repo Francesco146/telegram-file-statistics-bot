@@ -1,16 +1,44 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "telegram-file-statistics-bot"
 version = "1.1.0"
-description = "A Telegram bot that provides statistics about files and archives."
-authors = [
-    {name = "Francesco146"},
-]
-license-files = ["LICENSE"]
-readme = "README.md"
-requires-python = ">=3.13.1"
 dependencies = [
     "python-telegram-bot==21.9",
     "humanize==4.11.0",
     "python-dotenv==1.0.1",
     "argparse==1.4.0",
 ]
+requires-python = ">=3.10"
+authors = [
+    { name = "Francesco146", email = "49027005+Francesco146@users.noreply.github.com" },
+]
+maintainers = [
+    { name = "Francesco146", email = "49027005+Francesco146@users.noreply.github.com" },
+]
+description = "A Telegram bot that provides statistics about files and archives."
+readme = "README.md"
+license = { file = "LICENSE" }
+keywords = ["telegram", "bot", "statistics", "files", "archives"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Communications :: Chat",
+    "Programming Language :: Python",
+    'Programming Language :: Python :: 3 :: Only',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
+]
+
+[project.urls]
+Repository = "https://github.com/Francesco146/telegram-file-statistics-bot/"
+
+[project.scripts]
+telegram-file-statistics-bot = "telegram_file_statistics_bot.__main__:main"

@@ -56,8 +56,8 @@ msgid "Made with ❤️ by @Francesco146"
 msgstr "Realizzato con ❤️ da @Francesco146"
 
 #: bot/args.py:25
-msgid "Bot token (or set TOKEN environment variable)"
-msgstr "Token del bot (o impostare la variabile d'ambiente TOKEN)"
+msgid "Bot token (or set TELEGRAM_TOKEN environment variable)"
+msgstr "Token del bot (o impostare la variabile d'ambiente TELEGRAM_TOKEN)"
 
 #: bot/args.py:32
 msgid "Path to the SQLite database file"
@@ -223,3 +223,17 @@ msgstr "Azione sconosciuta: %s"
 msgid "Unknown action. Please try again."
 msgstr "Azione sconosciuta. Riprova."
 
+msgid "video"
+msgstr "video"
+
+msgid "videos"
+msgstr "video"
+
+msgid "File path is None"
+msgstr "Il percorso del file è nullo"
+
+msgid "Update does not contain a message or callback query"
+msgstr "L'aggiornamento non contiene un messaggio o una query di richiamo"
+
+msgid "Database path not set."
+msgstr "Percorso del database non impostato."

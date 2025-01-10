@@ -1,3 +1,8 @@
+"""
+This module handles the parsing of command-line arguments for
+the Telegram Bot for File Statistics.
+"""
+
 import argparse
 
 from . import get_str
@@ -11,9 +16,11 @@ def parse_args() -> argparse.Namespace:
         argparse.Namespace: A namespace object containing the parsed arguments.
 
     Arguments:
-        -t, --token (str): Bot token (or set TOKEN environment variable).
-        -db, --database (str): Path to the SQLite database file (default: "file_statistics.db").
-        -d, --debug: Enable debug mode for logging.
+        - -t, --token (str): Bot token (or set TELEGRAM_TOKEN environment
+        variable).
+        - -db, --database (str): Path to the SQLite database file
+        (default is "file_statistics.db").
+        - -d, --debug: Enable debug mode for logging.
     """
     parser = argparse.ArgumentParser(
         description=get_str("Telegram Bot for File Statistics"),
@@ -24,7 +31,7 @@ def parse_args() -> argparse.Namespace:
         "-t",
         "--token",
         type=str,
-        help=get_str("Bot token (or set TOKEN environment variable)"),
+        help=get_str("Bot token (or set TELEGRAM_TOKEN environment variable)"),
         default=None,
     )
     parser.add_argument(

@@ -1,28 +1,42 @@
+"""
+This module initializes the telegram file statistics bot.
+It sets up environment variables and configures logging.
+"""
+
 import gettext
 import logging
 import os
 
 from dotenv import load_dotenv
 
-load_dotenv(override=True)
+load_dotenv(override=True, verbose=True)
 
 
 class CustomFormatter(logging.Formatter):
+    """Custom log formatter for the bot.
+
+    Args:
+        logging (logging.Formatter): The logging formatter class.
+
+    Returns:
+        logging.Formatter: A custom log formatter for the bot.
+    """
 
     grey = "\x1b[38;20m"
     yellow = "\x1b[33;20m"
     bold_red = "\x1b[31;1m"
     reset = "\x1b[0m"
-    format = (
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s (%(filename)s:%(lineno)d)"
+    log_format = (
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s "
+        "(%(filename)s:%(lineno)d)"
     )
 
     FORMATS = {
-        logging.DEBUG: grey + format + reset,
-        logging.INFO: grey + format + reset,
-        logging.WARNING: yellow + format + reset,
-        logging.ERROR: bold_red + format + reset,
-        logging.CRITICAL: bold_red + format + reset,
+        logging.DEBUG: grey + log_format + reset,
+        logging.INFO: grey + log_format + reset,
+        logging.WARNING: yellow + log_format + reset,
+        logging.ERROR: bold_red + log_format + reset,
+        logging.CRITICAL: bold_red + log_format + reset,
     }
 
     def format(self, record):
@@ -39,8 +53,6 @@ ch.setFormatter(CustomFormatter())
 ch.setLevel(logging.DEBUG)
 
 logger.addHandler(ch)
-
-__all__ = ["database", "args", "handlers"]
 
 match os.getenv("BOT_LANGUAGE"):
     case "it":
