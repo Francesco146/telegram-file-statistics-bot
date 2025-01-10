@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "telegram-file-statistics-bot"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
     "python-telegram-bot==21.9",
     "humanize==4.11.0",
