@@ -122,8 +122,8 @@ async def handle_file(
             f"({humanize.naturalsize(file_size or 0)})",
             reply_markup=reply_markup,
         )
-    except (OSError, ValueError) as e:
-        logger.error(get_str("Error handling file: %s"), e)
+    except (OSError, ValueError) as error:
+        logger.error(get_str("Error handling file: %s"), error)
         await update.message.reply_text(get_str("Error handling file."))
 
 
@@ -202,8 +202,8 @@ async def stats(update: Update) -> None:
                 msg += "</code>\n"
 
         await send(msg, parse_mode="HTML", reply_markup=reply_markup)
-    except (OSError, ValueError) as e:
-        logger.error(get_str("Error getting stats: %s"), e)
+    except (OSError, ValueError) as error:
+        logger.error(get_str("Error getting stats: %s"), error)
         await send(
             get_str("Error getting statistics."),
             reply_markup=reply_markup
@@ -236,22 +236,13 @@ async def reset(update: Update) -> None:
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     try:
-        Database().update_user_data(
-            user_id,
-            {
-                "total_size": 0,
-                "total_download_size": 0,
-                "file_count": 0,
-                "streamable": 0,
-                "extension_categories": {},
-            },
-        )
+        Database().reset_user_data(user_id)
         await send(
             get_str("Statistics reset successfully."),
             reply_markup=reply_markup
         )
-    except (OSError, ValueError) as e:
-        logger.error(get_str("Error resetting stats: %s"), e)
+    except (OSError, ValueError) as error:
+        logger.error(get_str("Error resetting stats: %s"), error)
         await send(
             get_str("Error resetting statistics."),
             reply_markup=reply_markup
@@ -350,8 +341,8 @@ async def callback_query_handler(update: Update) -> None:
 
     try:
         await query.answer()
-    except (OSError, ValueError) as e:
-        logger.error(e)
+    except (OSError, ValueError) as error:
+        logger.error(error)
 
     match query.data:
         case "stats":

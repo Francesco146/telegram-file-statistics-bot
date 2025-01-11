@@ -99,10 +99,10 @@ def run_bot(token: str, local: bool) -> None:
     logger.info(get_str("Bot is starting..."))
     try:
         application.run_polling()
-    except (ConnectionError, TimeoutError) as e:
+    except (ConnectionError, TimeoutError) as error:
         if local:
             logger.error(get_str("Make sure the local server is running."))
-        logger.error(e)
+        logger.error(error)
 
 
 def main() -> None:

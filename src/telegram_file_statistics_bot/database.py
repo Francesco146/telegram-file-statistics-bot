@@ -95,7 +95,7 @@ class Database:
                 "total_download_size": 0,
                 "file_count": 0,
                 "streamable": 0,
-                "extension_categories": {},
+                "extension_categories": json.loads("{}"),
             }
         return {
             "total_size": row[1],
@@ -104,6 +104,31 @@ class Database:
             "streamable": row[4],
             "extension_categories": json.loads(row[5]),
         }
+
+    def reset_user_data(self, user_id: int) -> None:
+        """
+        Resets the user data in the database.
+
+        Args:
+            - user_id (int): The ID of the user.
+        """
+        with self._connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """INSERT OR REPLACE INTO user_data
+                   (user_id, total_size, total_download_size,
+                   file_count, streamable, extension_categories)
+                   VALUES (?, ?, ?, ?, ?, ?)""",
+                (
+                    user_id,
+                    0,
+                    0,
+                    0,
+                    0,
+                    json.dumps({}),
+                ),
+            )
+            conn.commit()
 
     def update_user_data(
         self, user_id: int, data: Dict
