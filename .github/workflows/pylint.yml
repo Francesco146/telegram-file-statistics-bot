@@ -28,3 +28,14 @@ jobs:
       
       - name: Run Pylint
         run: uv run pylint $(git ls-files '*.py')
+
+      - name: Create Dynamic Badge
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+            auth: ${{ secrets.GIST_SECRET }}
+            gistID: 8ae3c1b877db1f59168ae0da0ad34d6b
+            filename: test.json
+            label: Pylint
+            message: ${{ job.status }}
+            color: ${{ job.status == 'success' && 'green' || 'red' }}
+            forceUpdate: true

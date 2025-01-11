@@ -1,4 +1,5 @@
 # Telegram Bot for File Statistics
+![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Francesco146/8ae3c1b877db1f59168ae0da0ad34d6b/raw/test.json)
 
 This is a Telegram bot that provides statistics about files sent by users. The bot can track the total size of files, the number of files, the number of streamable files (e.g., videos), and categorize files by their extensions.
 
