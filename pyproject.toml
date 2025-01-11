@@ -11,7 +11,7 @@ dependencies = [
     "python-dotenv==1.0.1",
     "argparse==1.4.0",
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 authors = [
     { name = "Francesco146", email = "49027005+Francesco146@users.noreply.github.com" },
 ]
@@ -31,8 +31,6 @@ classifiers = [
     "Topic :: Communications :: Chat",
     "Programming Language :: Python",
     'Programming Language :: Python :: 3 :: Only',
-    'Programming Language :: Python :: 3.10',
-    'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
     'Programming Language :: Python :: 3.13',
 ]
@@ -42,3 +40,6 @@ Repository = "https://github.com/Francesco146/telegram-file-statistics-bot/"
 
 [project.scripts]
 telegram-file-statistics-bot = "telegram_file_statistics_bot.__main__:main"
+
+[dependency-groups]
+dev = ["pylint>=3.3.3"]

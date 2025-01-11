@@ -34,7 +34,7 @@ This is a Telegram bot that provides statistics about files sent by users. The b
 
 ## 🚀 Requirements
 
-- Python 3.10+
+- Python 3.12+
 - [uv](https://github.com/astral-sh/uv) for dependency management
 
 ## 🧩 Installation
