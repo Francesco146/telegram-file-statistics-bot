@@ -237,3 +237,6 @@ msgstr "L'aggiornamento non contiene un messaggio o una query di richiamo"
 
 msgid "Database path not set."
 msgstr "Percorso del database non impostato."
+
+msgid "File name or size not found."
+msgstr "Nome del file o dimensione non trovati."

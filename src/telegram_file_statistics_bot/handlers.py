@@ -64,7 +64,10 @@ async def handle_file(
         file_size = file.file_size
         file_name = file.file_name
 
-        if file_name and is_archive(file_name):
+        if not file_name or not file_size:
+            raise ValueError(get_str("File name or size not found."))
+
+        if is_archive(file_name):
             if not local_mode:
                 await update.message.reply_text(
                     get_str("Archives are not supported in non-local mode.")
@@ -80,7 +83,7 @@ async def handle_file(
             logger.debug(
                 f"{get_str("Processing archive")}: '%s' (%s)",
                 file_name,
-                humanize.naturalsize(file_size or 0),
+                humanize.naturalsize(file_size),
             )
             await handle_archive(update, context, file.file_id)
             keyboard = [
@@ -96,7 +99,7 @@ async def handle_file(
         logger.debug(
             f"{get_str("Processing file")}: '%s' (%s)",
             file_name,
-            humanize.naturalsize(file_size or 0),
+            humanize.naturalsize(file_size),
         )
         user_stats = Database().get_user_data(user_id)
 
@@ -104,11 +107,11 @@ async def handle_file(
         user_stats["total_download_size"] += file_size
         user_stats["file_count"] += 1
 
-        mime_type, _ = mimetypes.guess_type(file_name or "")
+        mime_type, _ = mimetypes.guess_type(file_name)
         if mime_type and mime_type.startswith("video"):
             user_stats["streamable"] += 1
 
-        extension = os.path.splitext(file_name or "")[1].lower()
+        extension = os.path.splitext(file_name)[1].lower()
         user_stats["extension_categories"].setdefault(extension, 0)
         user_stats["extension_categories"][extension] += 1
 
@@ -119,7 +122,7 @@ async def handle_file(
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
             f"{get_str('File received')}: '{file_name}' "
-            f"({humanize.naturalsize(file_size or 0)})",
+            f"({humanize.naturalsize(file_size)})",
             reply_markup=reply_markup,
         )
     except (OSError, ValueError) as error:
