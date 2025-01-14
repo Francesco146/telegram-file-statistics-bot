@@ -23,7 +23,7 @@ jobs:
         run: uv sync
       
       - name: Build the project
-        run: uv build
+        run: uv build --wheel
 
       - name: Set up Git
         run: |
@@ -44,7 +44,7 @@ jobs:
           git push origin $(cat tag.txt)
 
       - name: Create Pre-release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: "dist/*.whl"
           tag_name: ${{ steps.tag.outputs.tag }}
