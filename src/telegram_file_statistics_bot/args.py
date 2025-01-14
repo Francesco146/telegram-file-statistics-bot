@@ -52,7 +52,7 @@ def parse_args() -> argparse.Namespace:
         "-v",
         "--version",
         action="version",
-        version="telegram-file-statistics-bot v1.2.0",
+        version="telegram-file-statistics-bot v1.3.0",
         help=get_str("Show the version of the program"),
     )
     parser.add_argument(
