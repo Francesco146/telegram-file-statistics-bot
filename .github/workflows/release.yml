@@ -7,30 +7,45 @@ on:
 
 jobs:
   release:
-    if: contains(github.event.head_commit.message, 'chore: bump version to')
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Check for version bump commit
+        id: check-version-bump
+        run: |
+          if echo "${{ github.event.head_commit.message }}" | grep -qE '^chore: bump version to'; then
+            echo "version_bump=true" >> $GITHUB_ENV
+          else
+            echo "version_bump=false" >> $GITHUB_ENV
+          fi
+
+      - name: Stop if not a version bump
+        if: env.version_bump == 'false'
+        run: echo "This is not a version bump commit. Skipping release process."
+
       - name: Extract version from commit message
         id: extract-version
+        if: env.version_bump == 'true'
         run: |
           echo "${{ github.event.head_commit.message }}" | grep -oP '(?<=chore: bump version to )\S+' > version.txt
           VERSION=$(cat version.txt)
-          echo "::set-output name=version::$VERSION"
+          echo "version=$VERSION" >> $GITHUB_ENV
 
       - name: Tag the version
+        if: env.version_bump == 'true'
         run: |
-          git tag ${{ steps.extract-version.outputs.version }}
-          git push origin ${{ steps.extract-version.outputs.version }}
+          git tag ${{ env.version }}
+          git push origin ${{ env.version }}
 
       - name: Create Stable Release
+        if: env.version_bump == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.extract-version.outputs.version }}
-          name: "${{ steps.extract-version.outputs.version }}"
+          tag_name: ${{ env.version }}
+          name: "${{ env.version }}"
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
