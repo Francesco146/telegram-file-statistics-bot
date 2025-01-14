@@ -38,4 +38,3 @@ jobs:
             label: Pytest
             message: ${{ job.status }}
             color: ${{ job.status == 'success' && 'green' || 'red' }}
-            forceUpdate: true

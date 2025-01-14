@@ -33,6 +33,18 @@ jobs:
           echo "${{ github.event.head_commit.message }}" | grep -oP '(?<=chore: bump version to )\S+' > version.txt
           VERSION=$(cat version.txt)
           echo "version=$VERSION" >> $GITHUB_ENV
+      
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "**/pyproject.toml"
+
+      - name: Install the project 
+        run: uv sync
+      
+      - name: Build the project
+        run: uv build --wheel
 
       - name: Tag the version
         if: env.version_bump == 'true'
@@ -44,6 +56,7 @@ jobs:
         if: env.version_bump == 'true'
         uses: softprops/action-gh-release@v2
         with:
+          files: "dist/*.whl"
           tag_name: ${{ env.version }}
           name: "${{ env.version }}"
           prerelease: false
