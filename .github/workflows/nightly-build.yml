@@ -22,7 +22,7 @@ jobs:
             echo "stable_release=false" >> $GITHUB_ENV
           fi
 
-      - name: Stop if not a version bump
+      - name: Stop if it is a stable version bump
         if: env.stable_release == 'true'
         run: echo "This is not a nightly build commit. Skipping nightly build process."
 
