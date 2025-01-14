@@ -1,0 +1,54 @@
+name: Nightly Build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "**/pyproject.toml"
+
+      - name: Install the project 
+        run: uv sync
+      
+      - name: Build the project
+        run: uv build
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+      - name: Generate version tag
+        id: tag
+        run: |
+          TIMESTAMP=$(date +"%Y%m%d%H%M%S")
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          echo "v${TIMESTAMP}-${SHORT_SHA}" > tag.txt
+          echo "::set-output name=tag::$(cat tag.txt)"
+
+      - name: Create Git tag
+        run: |
+          git tag $(cat tag.txt)
+          git push origin $(cat tag.txt)
+
+      - name: Create Pre-release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: "dist/*.whl"
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: "Nightly Build: ${{ steps.tag.outputs.tag }}"
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
