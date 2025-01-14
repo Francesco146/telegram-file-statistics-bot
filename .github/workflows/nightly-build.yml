@@ -13,24 +13,43 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
+      - name: Check for version bump commit
+        id: check-version-bump
+        run: |
+          if echo "${{ github.event.head_commit.message }}" | grep -qE '^chore: bump version to'; then
+            echo "stable_release=true" >> $GITHUB_ENV
+          else
+            echo "stable_release=false" >> $GITHUB_ENV
+          fi
+
+      - name: Stop if not a version bump
+        if: env.stable_release == 'true'
+        run: echo "This is not a nightly build commit. Skipping nightly build process."
+
+      
       - name: Install uv
+        if: env.stable_release == 'false'
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
           cache-dependency-glob: "**/pyproject.toml"
 
       - name: Install the project 
+        if: env.stable_release == 'false'
         run: uv sync
       
       - name: Build the project
+        if: env.stable_release == 'false'
         run: uv build --wheel
 
       - name: Set up Git
+        if: env.stable_release == 'false'
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
       - name: Generate version tag
+        if: env.stable_release == 'false'
         id: tag
         run: |
           TIMESTAMP=$(date +"%Y%m%d%H%M%S")
@@ -39,11 +58,13 @@ jobs:
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
 
       - name: Create Git tag
+        if: env.stable_release == 'false'
         run: |
           git tag ${{ steps.tag.outputs.tag }}
           git push origin ${{ steps.tag.outputs.tag }}
 
       - name: Create Pre-release
+        if: env.stable_release == 'false'
         uses: softprops/action-gh-release@v2
         with:
           files: "dist/*.whl"
