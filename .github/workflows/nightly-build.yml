@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  release:
+  nightly:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,13 +35,13 @@ jobs:
         run: |
           TIMESTAMP=$(date +"%Y%m%d%H%M%S")
           SHORT_SHA=$(git rev-parse --short HEAD)
-          echo "v${TIMESTAMP}-${SHORT_SHA}" > tag.txt
-          echo "::set-output name=tag::$(cat tag.txt)"
+          TAG="v${TIMESTAMP}-${SHORT_SHA}"
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
 
       - name: Create Git tag
         run: |
-          git tag $(cat tag.txt)
-          git push origin $(cat tag.txt)
+          git tag ${{ steps.tag.outputs.tag }}
+          git push origin ${{ steps.tag.outputs.tag }}
 
       - name: Create Pre-release
         uses: softprops/action-gh-release@v2
