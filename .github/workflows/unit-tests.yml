@@ -1,10 +1,10 @@
-name: Pylint
+name: Pytest
 
 on: [push]
 
 jobs:
-  pylint:
-    name: Pylint
+  pytest:
+    name: Pytest
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -26,16 +26,16 @@ jobs:
       - name: Install the project 
         run: uv sync --all-extras --dev
       
-      - name: Run Pylint
-        run: uv run pylint $(git ls-files '*.py')
+      - name: Run Pytest
+        run: uv run pytest
 
       - name: Create Dynamic Badge
         uses: schneegans/dynamic-badges-action@v1.7.0
         with:
             auth: ${{ secrets.GIST_SECRET }}
-            gistID: 8ae3c1b877db1f59168ae0da0ad34d6b
-            filename: TFSB-pylint.json
-            label: Pylint
+            gistID: dcac56daf752bcf2f36ba98144fa3595
+            filename: TFSB-pytest.json
+            label: Pytest
             message: ${{ job.status }}
             color: ${{ job.status == 'success' && 'green' || 'red' }}
             forceUpdate: true
