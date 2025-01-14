@@ -91,7 +91,7 @@ def get_archive_absolute_path(file_path: str) -> str:
     """Get the absolute path of the archive file.
 
     Args:
-        file_path (str): The relative path of the archive file.
+        file_path (str): The URL path of the archive file.
 
     Returns:
         str: The absolute path of the archive file.

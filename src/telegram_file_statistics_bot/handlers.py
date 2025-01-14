@@ -65,7 +65,7 @@ async def handle_file(
         file_name = file.file_name
 
         if not file_name or not file_size:
-            raise ValueError(get_str("File name or size not found."))
+            return
 
         if is_archive(file_name):
             if not local_mode:
