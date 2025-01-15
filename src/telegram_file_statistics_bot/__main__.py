@@ -111,20 +111,66 @@ def main() -> None:
     """
     args = parse_args()
 
-    sqlite_db = Database(args.database)
+    database_via_env = os.getenv("DATABASE_FILE", args.database)
 
-    if args.debug:
+    database_file_path = args.database or database_via_env
+
+    if args.database and args.database != database_via_env:
+        logger.warning(
+            get_str(
+                "Environment variable DATABASE_FILE "
+                "is overridden by the command-line argument."
+            )
+        )
+
+    sqlite_db = Database(database_file_path)
+
+    debug_via_env = os.getenv("DEBUG_MODE", str(args.debug)).lower() == "true"
+
+    should_debug = args.debug or debug_via_env
+
+    if args.debug and args.debug != debug_via_env:
+        logger.warning(
+            get_str(
+                "Environment variable DEBUG_MODE "
+                "is overridden by the command-line argument."
+            )
+        )
+
+    if should_debug:
         logger.setLevel(logging.DEBUG)
 
     sqlite_db.init_db()
 
-    logger.debug(get_str("Current configuration:"))
-    logger.debug("  * language: %s", os.getenv('BOT_LANGUAGE', 'en'))
-    for arg in vars(args):
-        if arg not in ["token"]:
-            logger.debug("  * %s: %s", arg, getattr(args, arg))
+    token_via_env = os.getenv("TELEGRAM_TOKEN", args.token)
+    token = args.token or token_via_env
 
-    run_bot(args.token or os.getenv("TELEGRAM_TOKEN", ""), args.local)
+    if args.token and args.token != token_via_env:
+        logger.warning(
+            get_str(
+                "Environment variable TELEGRAM_TOKEN "
+                "is overridden by the command-line argument."
+            )
+        )
+
+    local_via_env = os.getenv("LOCAL_MODE", str(args.local)).lower() == "true"
+    local = args.local or local_via_env
+
+    if args.local and args.local != local_via_env:
+        logger.warning(
+            get_str(
+                "Environment variable LOCAL_MODE "
+                "is overridden by the command-line argument."
+            )
+        )
+
+    logger.debug(get_str("Current configuration:"))
+    logger.debug(get_str("  * language: %s"), os.getenv('BOT_LANGUAGE', 'en'))
+    logger.debug(get_str("  * database: %s"), database_file_path)
+    logger.debug(get_str("  * debug: %s"), should_debug)
+    logger.debug(get_str("  * local: %s"), local)
+
+    run_bot(token, local)
 
 
 if __name__ == "__main__":
