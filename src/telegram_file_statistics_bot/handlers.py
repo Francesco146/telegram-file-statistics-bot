@@ -50,11 +50,12 @@ async def handle_file(
     7. Sends a confirmation message to the user with the file name and size.
     8. Logs and sends an error message if an exception occurs.
     """
-    if update.effective_user is None:
-        return
-    if update.message is None:
-        return
-    if update.message.document is None:
+
+    if not (
+        update.effective_user and
+        update.message and
+        update.message.document
+    ):
         return
 
     try:
