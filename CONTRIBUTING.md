@@ -85,6 +85,7 @@ To run the tests, use the following command:
 ```sh
 uv run pytest
 ```
+Wanted passing tests are `100%`.
 
 ## Running the linting tools
 
@@ -92,6 +93,7 @@ To run the linting tools, use the following command:
 ```sh
 uv run pylint $(find src tests -name "*.py" -type f)
 ```
+Wanted score is `10.00/10`.
 
 ## Translations
 
