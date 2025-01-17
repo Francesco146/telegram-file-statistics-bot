@@ -85,7 +85,13 @@ async def handle_file(
                 file_name,
                 humanize.naturalsize(file_size),
             )
-            await handle_archive(update, context, file.file_id)
+            try:
+                await handle_archive(update, context, file.file_id)
+            except ValueError:
+                await update.message.reply_text(
+                    get_str("Error handling zip file.")
+                )
+                return
             keyboard = [
                 [InlineKeyboardButton(STATS_LABEL, callback_data="stats")],
             ]

@@ -84,7 +84,7 @@ async def handle_archive(
             Database().update_user_data(user_id, user_stats)
     except (zipfile.BadZipFile, OSError, ValueError) as error:
         logger.error(get_str("Error handling zip file: %s"), error)
-        await update.message.reply_text(get_str("Error handling zip file."))
+        raise error
 
 
 def get_archive_absolute_path(file_path: str) -> str:
