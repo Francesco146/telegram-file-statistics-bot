@@ -15,6 +15,7 @@ Thank you for considering contributing to the Telegram File Statistics Bot! We w
   - [Running Tests](#running-tests)
   - [Running the linting tools](#running-the-linting-tools)
   - [Translations](#translations)
+  - [CI/CD](#cicd)
 
 ## Code of Conduct
 
@@ -112,5 +113,14 @@ We use `msgfmt.py` and `pygettext.py` for handling translations. Here is how you
     ```
 
 4. Verify that the translations are working correctly by running the bot and checking the translated messages.
+
+## CI/CD
+
+This project uses GitHub Actions for continuous integration and deployment. The workflows are defined in the [`.github/workflows`](.github/workflows) directory:
+- [`nightly-build.yml`](.github/workflows/nightly-build.yml): Runs nightly builds, which releases a new version (pre-release) at each latest commit. In the release, it builds the wheel and uploads it to GitHub Releases, along with the source distribution. This workflow runs only if the latest commit is not a release commit.
+- [`release.yml`](.github/workflows/release.yml): Creates stable releases. It builds the wheel and uploads it to GitHub Releases, along with the source distribution. This workflow matches the commit message with the pattern `chore: bump version to <version>` to determine the version number, where `<version>` is something like `v*.*.*`.
+- [`pylint.yml`](.github/workflows/pylint.yml): Runs Pylint for code linting, and updates the badge in the README.
+- [`unit-tests.yml`](.github/workflows/unit-tests.yml): Runs unit tests using Pytest, and updates the badge in the README.
+
 
 Thank you for contributing to the Telegram File Statistics Bot!
