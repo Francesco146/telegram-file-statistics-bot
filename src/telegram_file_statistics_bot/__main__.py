@@ -6,6 +6,7 @@ It initializes and runs the bot application.
 import logging
 import os
 
+from telegram.error import NetworkError
 from telegram.ext import (
     ApplicationBuilder,
     CallbackQueryHandler,
@@ -55,8 +56,15 @@ def run_bot(token: str, local: bool) -> None:
     application = ApplicationBuilder().token(token).local_mode(local)
 
     if local:
-        application.base_url("http://0.0.0.0:8081/bot")
-        application.base_file_url("http://0.0.0.0:8081/file/bot")
+        if os.getenv("AM_I_IN_A_DOCKER_CONTAINER", "False").lower() == "true":
+            base_url = "http://telegram-bot-api:8081/bot"
+            base_file_url = "http://telegram-bot-api:8081/file/bot"
+        else:
+            base_url = "http://0.0.0.0:8081/bot"
+            base_file_url = "http://0.0.0.0:8081/file/bot"
+
+        application.base_url(base_url)
+        application.base_file_url(base_file_url)
         # high value for large files in local mode
         application.read_timeout(1000)
 
@@ -99,10 +107,10 @@ def run_bot(token: str, local: bool) -> None:
     logger.info(get_str("Bot is starting..."))
     try:
         application.run_polling()
-    except (ConnectionError, TimeoutError) as error:
+    except (ConnectionError, TimeoutError, NetworkError) as error:
+        logger.error(error)
         if local:
             logger.error(get_str("Make sure the local server is running."))
-        logger.error(error)
 
 
 def main() -> None:
@@ -153,13 +161,14 @@ def main() -> None:
             )
         )
 
-    local_via_env = os.getenv("LOCAL_MODE", str(args.local)).lower() == "true"
+    local_via_env = os.getenv(
+        "LOCAL_SERVER_MODE", str(args.local)).lower() == "true"
     local = args.local or local_via_env
 
     if args.local and args.local != local_via_env:
         logger.warning(
             get_str(
-                "Environment variable LOCAL_MODE "
+                "Environment variable LOCAL_SERVER_MODE "
                 "is overridden by the command-line argument."
             )
         )

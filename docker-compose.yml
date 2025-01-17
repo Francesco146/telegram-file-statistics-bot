@@ -1,0 +1,36 @@
+name: telegram-file-statistics-bot
+
+services:
+    telegram-bot-api:
+        hostname: telegram-bot-api
+        image: aiogram/telegram-bot-api:latest
+        env_file:
+            - .env
+        environment:
+            TELEGRAM_LOCAL: "True"
+        volumes:
+            - ./api/telegram-bot-api-data:/var/lib/telegram-bot-api
+        ports:
+            - "8081:8081"
+        networks:
+            - telegram-network
+
+    telegram-bot:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        env_file:
+            - .env
+        environment:
+            AM_I_IN_A_DOCKER_CONTAINER: "True"
+        networks:
+            - telegram-network
+        volumes:
+            - ./api/telegram-bot-api-data:/app/api/telegram-bot-api-data
+
+volumes:
+    telegram-bot-api-data:
+
+networks:
+    telegram-network:
+        driver: bridge
