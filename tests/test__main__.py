@@ -168,7 +168,7 @@ def test_main_with_env_vars(
     os.environ["DATABASE_FILE"] = "env_database.db"
     os.environ["DEBUG_MODE"] = "true"
     os.environ["TELEGRAM_TOKEN"] = "env_token"
-    os.environ["LOCAL_MODE"] = "true"
+    os.environ["LOCAL_SERVER_MODE"] = "true"
 
     with patch(
         "telegram_file_statistics_bot.__main__.parse_args"
@@ -222,7 +222,7 @@ def test_main_with_mixed_env_and_args(
     os.environ["DATABASE_FILE"] = "env_database.db"
     os.environ["DEBUG_MODE"] = "false"
     os.environ["TELEGRAM_TOKEN"] = "env_token"
-    os.environ["LOCAL_MODE"] = "false"
+    os.environ["LOCAL_SERVER_MODE"] = "false"
 
     with patch(
         "telegram_file_statistics_bot.__main__.parse_args"
@@ -250,6 +250,6 @@ def test_main_with_mixed_env_and_args(
         "is overridden by the command-line argument."
     )
     test_mock_get_str.assert_any_call(
-        "Environment variable LOCAL_MODE "
+        "Environment variable LOCAL_SERVER_MODE "
         "is overridden by the command-line argument."
     )
