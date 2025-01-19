@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: Francesco146@users.noreply.github.com\n"
-"POT-Creation-Date: 2025-01-03 21:50+0100\n"
+"POT-Creation-Date: 2025-01-19 23:24+0100\n"
 "PO-Revision-Date: 2025-01-03 21:50+0100\n"
 "Last-Translator: Francesco146 <Francesco146@users.noreply.github.com>\n"
 "Language-Team: Italian <Francesco146@users.noreply.github.com>\n"
@@ -16,229 +16,299 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
-
-#: main.py:48
-msgid "Token not provided. Exiting..."
-msgstr "Token non fornito. Uscita..."
-
-#: main.py:71
-msgid "Bot is starting..."
-msgstr "Bot in avvio..."
-
-#: main.py:74
-msgid "Make sure the local server is running."
-msgstr "Assicurati che il server locale sia in esecuzione."
-
-#: main.py:83
-msgid "Current configuration:"
-msgstr "Configurazione attuale:"
-
-#: bot/archive_utils.py:63
-msgid "Processing file: '%s' (%s)"
-msgstr "Processo il file: '%s' (%s)"
-
-#: bot/archive_utils.py:81
-msgid "File received via archive"
-msgstr "File ricevuto tramite archivio"
-
-#: bot/archive_utils.py:87
-msgid "Error handling zip file: %s"
-msgstr "Errore durante la gestione del file zip: %s"
-
-#: bot/archive_utils.py:88
-msgid "Error handling zip file."
-msgstr "Errore durante la gestione del file zip."
-
-#: bot/args.py:18
-msgid "Telegram Bot for File Statistics"
-msgstr "Bot Telegram per le statistiche sui file"
-
-#: bot/args.py:19
-msgid "Made with ❤️ by @Francesco146"
-msgstr "Realizzato con ❤️ da @Francesco146"
-
-#: bot/args.py:25
-msgid "Bot token (or set TELEGRAM_TOKEN environment variable)"
-msgstr "Token del bot (o impostare la variabile d'ambiente TELEGRAM_TOKEN)"
-
-#: bot/args.py:32
-msgid "Path to the SQLite database file"
-msgstr "Percorso del file del database SQLite"
-
-#: bot/args.py:39
-msgid "Enable debug mode for logging"
-msgstr "Abilita la modalità di debug per il logging"
-
-#: bot/args.py:47
-msgid "Show the version of the program"
-msgstr "Mostra la versione del programma"
-
-#: bot/args.py:53
-msgid "Run the bot in a telegram api bot local server"
-msgstr "Esegui il bot in un server locale di telegram api bot"
-
-#: bot/handlers.py:12
-msgid "🏠 Home"
-msgstr "🏠 Casa"
-
-#: bot/handlers.py:13
-msgid "📊 View Statistics"
-msgstr "📊 Visualizza Statistiche"
-
-#: bot/handlers.py:14
-msgid "⌫ Reset Statistics"
-msgstr "⌫ Reimposta Statistiche"
-
-#: bot/handlers.py:15
-msgid "🆘 Help"
-msgstr "🆘 Aiuto"
-
-#: bot/handlers.py:51 bot/handlers.py:53
-msgid "Archives are not supported in non-local mode."
-msgstr "Gli archivi non sono supportati in modalità non locale."
-
-#: bot/handlers.py:57
-msgid "This may take some time."
-msgstr "Questo potrebbe richiedere del tempo."
-
-#: bot/handlers.py:57 bot/handlers.py:60
-msgid "Processing archive"
-msgstr "Processo l'archivio"
-
-#: bot/handlers.py:65
-msgid "Archive received"
-msgstr "Archivio ricevuto"
-
-#: bot/handlers.py:69
-msgid "Processing file"
-msgstr "Processo il file"
-
-#: bot/handlers.py:89
-msgid "File received"
-msgstr "File ricevuto"
-
-#: bot/handlers.py:92
-msgid "Error handling file: %s"
-msgstr "Errore durante la gestione del file: %s"
-
-#: bot/handlers.py:93
-msgid "Error handling file."
-msgstr "Errore durante la gestione del file."
-
-#: bot/handlers.py:128
-msgid " files"
-msgstr " file"
-
-#: bot/handlers.py:130
-msgid " file"
-msgstr " file"
-
-#: bot/handlers.py:133
-msgid "Total file size"
-msgstr "Spazio totale dei file"
-
-#: bot/handlers.py:134
-msgid "Total download size"
-msgstr "Spazio totale da scaricare"
-
-#: bot/handlers.py:135
-msgid "Number of files uploaded"
-msgstr "Numero di file caricati"
-
-#: bot/handlers.py:136
-msgid "Streamable files"
-msgstr "File riproducibili"
-
-#: bot/handlers.py:137
-msgid "Extensions"
-msgstr "Estensioni"
-
-#: bot/handlers.py:140
-msgid "No files uploaded yet."
-msgstr "Nessun file caricato ancora."
-
-#: bot/handlers.py:143
-msgid "file"
-msgstr "file"
-
-#: bot/handlers.py:143
-msgid "files"
-msgstr "file"
-
-#: bot/handlers.py:147
-msgid "Error getting stats: %s"
-msgstr "Errore durante il recupero delle statistiche: %s"
-
-#: bot/handlers.py:148
-msgid "Error getting statistics."
-msgstr "Errore durante il recupero delle statistiche."
-
-#: bot/handlers.py:187
-msgid "Statistics reset successfully."
-msgstr "Statistiche reimpostate con successo."
-
-#: bot/handlers.py:189
-msgid "Error resetting stats: %s"
-msgstr "Errore durante la reimpostazione delle statistiche: %s"
-
-#: bot/handlers.py:190
-msgid "Error resetting statistics."
-msgstr "Errore durante la reimpostazione delle statistiche."
-
-#: bot/handlers.py:212
-msgid "to the file monitoring bot! Here's what you can do:"
-msgstr "nel bot di monitoraggio dei file! Ecco cosa puoi fare:"
-
-#: bot/handlers.py:212 bot/handlers.py:242
-msgid "Welcome"
-msgstr "Benvenuto"
-
-#: bot/handlers.py:213
-msgid "Start the bot and get information on how to use it."
-msgstr "Avvia il bot e ottieni informazioni su come utilizzarlo."
-
-#: bot/handlers.py:214
-msgid "View statistics on uploaded files."
-msgstr "Visualizza le statistiche sui file caricati."
-
-#: bot/handlers.py:215
-msgid "Reset the statistics."
-msgstr "Reimposta le statistiche."
-
-#: bot/handlers.py:216
-msgid "Show this help message."
-msgstr "Mostra questo messaggio di aiuto."
-
-#: bot/handlers.py:217
-msgid "You can also send documents and receive summaries on their size and more."
-msgstr "Puoi anche inviare documenti e ricevere riepiloghi sulle loro dimensioni e altro."
-
-#: bot/handlers.py:242
-msgid "to the file monitoring bot! Use the buttons below to navigate."
-msgstr "nel bot di monitoraggio dei file! Usa i pulsanti qui sotto per navigare."
-
-#: bot/handlers.py:270
-msgid "Unknown action: %s"
-msgstr "Azione sconosciuta: %s"
-
-#: bot/handlers.py:271
-msgid "Unknown action. Please try again."
-msgstr "Azione sconosciuta. Riprova."
-
-msgid "video"
-msgstr "video"
-
-msgid "videos"
-msgstr "video"
-
+#: src/telegram_file_statistics_bot/archive_utils.py:69
 msgid "File path is None"
 msgstr "Il percorso del file è nullo"
 
-msgid "Update does not contain a message or callback query"
-msgstr "L'aggiornamento non contiene un messaggio o una query di richiamo"
+#: src/telegram_file_statistics_bot/archive_utils.py:86
+#, python-format
+msgid "Error handling zip file: %s"
+msgstr "Errore durante la gestione del file zip: %s"
 
+#: src/telegram_file_statistics_bot/archive_utils.py:141
+#: src/telegram_file_statistics_bot/handlers.py:107
+msgid "Processing file"
+msgstr "Processo il file"
+
+#: src/telegram_file_statistics_bot/archive_utils.py:149
+msgid "File received via archive"
+msgstr "File ricevuto tramite archivio"
+
+#: src/telegram_file_statistics_bot/database.py:40
 msgid "Database path not set."
 msgstr "Percorso del database non impostato."
 
-msgid "File name or size not found."
-msgstr "Nome del file o dimensione non trovati."
+#: src/telegram_file_statistics_bot/handlers.py:19
+msgid "🏠 Home"
+msgstr "🏠 Casa"
+
+#: src/telegram_file_statistics_bot/handlers.py:20
+msgid "📊 View Statistics"
+msgstr "📊 Visualizza Statistiche"
+
+#: src/telegram_file_statistics_bot/handlers.py:21
+msgid "⌫ Reset Statistics"
+msgstr "⌫ Reimposta Statistiche"
+
+#: src/telegram_file_statistics_bot/handlers.py:22
+msgid "🆘 Help"
+msgstr "🆘 Aiuto"
+
+#: src/telegram_file_statistics_bot/handlers.py:74
+#: src/telegram_file_statistics_bot/handlers.py:77
+msgid "Archives are not supported in non-local mode."
+msgstr "Gli archivi non sono supportati in modalità non locale."
+
+#: src/telegram_file_statistics_bot/handlers.py:81
+#: src/telegram_file_statistics_bot/handlers.py:85
+msgid "Processing archive"
+msgstr "Processo l'archivio"
+
+#: src/telegram_file_statistics_bot/handlers.py:82
+msgid "This may take some time."
+msgstr "Questo potrebbe richiedere del tempo."
+
+#: src/telegram_file_statistics_bot/handlers.py:93
+msgid "Error handling zip file."
+msgstr "Errore durante la gestione del file zip."
+
+#: src/telegram_file_statistics_bot/handlers.py:101
+msgid "Archive received"
+msgstr "Archivio ricevuto"
+
+#: src/telegram_file_statistics_bot/handlers.py:131
+msgid "File received"
+msgstr "File ricevuto"
+
+#: src/telegram_file_statistics_bot/handlers.py:136
+#, python-format
+msgid "Error handling file: %s"
+msgstr "Errore durante la gestione del file: %s"
+
+#: src/telegram_file_statistics_bot/handlers.py:137
+msgid "Error handling file."
+msgstr "Errore durante la gestione del file."
+
+#: src/telegram_file_statistics_bot/handlers.py:182
+msgid " files"
+msgstr " file"
+
+#: src/telegram_file_statistics_bot/handlers.py:184
+msgid " file"
+msgstr " file"
+
+#: src/telegram_file_statistics_bot/handlers.py:187
+msgid "Total file size"
+msgstr "Spazio totale dei file"
+
+#: src/telegram_file_statistics_bot/handlers.py:189
+msgid "Total download size"
+msgstr "Spazio totale da scaricare"
+
+#: src/telegram_file_statistics_bot/handlers.py:192
+msgid "Number of files uploaded"
+msgstr "Numero di file caricati"
+
+#: src/telegram_file_statistics_bot/handlers.py:194
+msgid "Streamable files"
+msgstr "File riproducibili"
+
+#: src/telegram_file_statistics_bot/handlers.py:199
+msgid "videos"
+msgstr "video"
+
+#: src/telegram_file_statistics_bot/handlers.py:201
+msgid "video"
+msgstr "video"
+
+#: src/telegram_file_statistics_bot/handlers.py:203
+msgid "Extensions"
+msgstr "Estensioni"
+
+#: src/telegram_file_statistics_bot/handlers.py:205
+msgid "No files uploaded yet."
+msgstr "Nessun file caricato ancora."
+
+#: src/telegram_file_statistics_bot/handlers.py:210
+msgid "file"
+msgstr "file"
+
+#: src/telegram_file_statistics_bot/handlers.py:212
+msgid "files"
+msgstr "file"
+
+#: src/telegram_file_statistics_bot/handlers.py:217
+#, python-format
+msgid "Error getting stats: %s"
+msgstr "Errore durante il recupero delle statistiche: %s"
+
+#: src/telegram_file_statistics_bot/handlers.py:219
+msgid "Error getting statistics."
+msgstr "Errore durante il recupero delle statistiche."
+
+#: src/telegram_file_statistics_bot/handlers.py:252
+msgid "Statistics reset successfully."
+msgstr "Statistiche reimpostate con successo."
+
+#: src/telegram_file_statistics_bot/handlers.py:256
+#, python-format
+msgid "Error resetting stats: %s"
+msgstr "Errore durante la reimpostazione delle statistiche: %s"
+
+#: src/telegram_file_statistics_bot/handlers.py:258
+msgid "Error resetting statistics."
+msgstr "Errore durante la reimpostazione delle statistiche."
+
+#: src/telegram_file_statistics_bot/handlers.py:289
+#, fuzzy, python-format
+msgid "Welcome %s to the file monitoring bot! Here's what you can do:"
+msgstr "Benvenuto nel bot di monitoraggio dei file! Ecco cosa puoi fare:"
+
+#: src/telegram_file_statistics_bot/handlers.py:291
+msgid "Start the bot and get information on how to use it."
+msgstr "Avvia il bot e ottieni informazioni su come utilizzarlo."
+
+#: src/telegram_file_statistics_bot/handlers.py:292
+msgid "View statistics on uploaded files."
+msgstr "Visualizza le statistiche sui file caricati."
+
+#: src/telegram_file_statistics_bot/handlers.py:293
+msgid "Reset the statistics."
+msgstr "Reimposta le statistiche."
+
+#: src/telegram_file_statistics_bot/handlers.py:294
+msgid "Show this help message."
+msgstr "Mostra questo messaggio di aiuto."
+
+#: src/telegram_file_statistics_bot/handlers.py:295
+msgid ""
+"You can also send documents and receive summaries on their size and more."
+msgstr ""
+"Puoi anche inviare documenti e ricevere riepiloghi sulle loro dimensioni e "
+"altro."
+
+#: src/telegram_file_statistics_bot/handlers.py:326
+#, fuzzy, python-format
+msgid ""
+"Welcome %s to the file monitoring bot! Use the buttons below to navigate."
+msgstr ""
+"Benvenuto %s nel bot di monitoraggio dei file! Usa i pulsanti qui sotto per "
+"navigare."
+
+#: src/telegram_file_statistics_bot/handlers.py:360
+#, python-format
+msgid "Unknown action: %s"
+msgstr "Azione sconosciuta: %s"
+
+#: src/telegram_file_statistics_bot/handlers.py:362
+msgid "Unknown action. Please try again."
+msgstr "Azione sconosciuta. Riprova."
+
+#: src/telegram_file_statistics_bot/helper.py:33
+msgid "Update does not contain a message or callback query"
+msgstr "L'aggiornamento non contiene un messaggio o una query di richiamo"
+
+#: src/telegram_file_statistics_bot/args.py:26
+msgid "Telegram Bot for File Statistics"
+msgstr "Bot Telegram per le statistiche sui file"
+
+#: src/telegram_file_statistics_bot/args.py:28
+msgid "Made with ❤️ by @Francesco146"
+msgstr "Realizzato con ❤️ da @Francesco146"
+
+#: src/telegram_file_statistics_bot/args.py:34
+msgid "Bot token (or set TELEGRAM_TOKEN environment variable)"
+msgstr "Token del bot (o impostare la variabile d'ambiente TELEGRAM_TOKEN)"
+
+#: src/telegram_file_statistics_bot/args.py:41
+msgid "Path to the SQLite database file"
+msgstr "Percorso del file del database SQLite"
+
+#: src/telegram_file_statistics_bot/args.py:48
+msgid "Enable debug mode for logging"
+msgstr "Abilita la modalità di debug per il logging"
+
+#: src/telegram_file_statistics_bot/args.py:56
+msgid "Show the version of the program"
+msgstr "Mostra la versione del programma"
+
+#: src/telegram_file_statistics_bot/args.py:62
+msgid "Run the bot in a telegram api bot local server"
+msgstr "Esegui il bot in un server locale di telegram api bot"
+
+#: src/telegram_file_statistics_bot/__main__.py:53
+msgid "Token not provided. Exiting..."
+msgstr "Token non fornito. Uscita..."
+
+#: src/telegram_file_statistics_bot/__main__.py:107
+msgid "Bot is starting..."
+msgstr "Bot in avvio..."
+
+#: src/telegram_file_statistics_bot/__main__.py:113
+msgid "Make sure the local server is running."
+msgstr "Assicurati che il server locale sia in esecuzione."
+
+#: src/telegram_file_statistics_bot/__main__.py:129
+msgid ""
+"Environment variable DATABASE_FILE is overridden by the command-line "
+"argument."
+msgstr ""
+"La variabile d'ambiente DATABASE_FILE è sovrascritta dall'argomento della "
+"riga di comando."
+
+#: src/telegram_file_statistics_bot/__main__.py:142
+msgid ""
+"Environment variable DEBUG_MODE is overridden by the command-line argument."
+msgstr ""
+"La variabile d'ambiente DEBUG_MODE è sovrascritta dall'argomento della riga "
+"di comando."
+
+#: src/telegram_file_statistics_bot/__main__.py:157
+msgid ""
+"Environment variable TELEGRAM_TOKEN is overridden by the command-line "
+"argument."
+msgstr ""
+"La variabile d'ambiente TELEGRAM_TOKEN è sovrascritta dall'argomento della "
+"riga di comando."
+
+#: src/telegram_file_statistics_bot/__main__.py:168
+msgid ""
+"Environment variable LOCAL_SERVER_MODE is overridden by the command-line "
+"argument."
+msgstr ""
+"La variabile d'ambiente LOCAL_SERVER_MODE è sovrascritta dall'argomento "
+"della riga di comando."
+
+#: src/telegram_file_statistics_bot/__main__.py:172
+msgid "Current configuration:"
+msgstr "Configurazione attuale:"
+
+#: src/telegram_file_statistics_bot/__main__.py:173
+#, python-format
+msgid "  * language: %s"
+msgstr "  * lingua: %s"
+
+#: src/telegram_file_statistics_bot/__main__.py:174
+#, python-format
+msgid "  * database: %s"
+msgstr "  * database: %s"
+
+#: src/telegram_file_statistics_bot/__main__.py:175
+#, python-format
+msgid "  * debug: %s"
+msgstr "  * debug: %s"
+
+#: src/telegram_file_statistics_bot/__main__.py:176
+#, python-format
+msgid "  * local: %s"
+msgstr "  * modalità locale: %s"
+
+#~ msgid "Welcome"
+#~ msgstr "Benvenuto"
+
+#, fuzzy, python-format
+#~ msgid "Processing file: '%(file)s' (%(size)s)"
+#~ msgstr "Processo il file: '%(file)s' (%(size)s)"
+
+#~ msgid "File name or size not found."
+#~ msgstr "Nome del file o dimensione non trovati."
