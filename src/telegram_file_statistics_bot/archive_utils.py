@@ -138,7 +138,7 @@ async def process_extracted_files(
             file_path = os.path.join(root, file)
             file_size = os.path.getsize(file_path)
             logger.debug(
-                get_str("Processing file: '%s' (%s)"),
+                f"{get_str("Processing file")}: '%s' (%s)",
                 file,
                 humanize.naturalsize(file_size),
             )

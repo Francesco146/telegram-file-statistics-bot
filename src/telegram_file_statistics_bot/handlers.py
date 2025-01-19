@@ -177,6 +177,7 @@ async def stats(update: Update) -> None:
         user_id = update.effective_user.id
         user_stats = Database().get_user_data(user_id)
         file_count = str(user_stats["file_count"])
+        # TODO: Add translations for pluralization
         if int(file_count) > 1:
             file_count += get_str(" files")
         else:
@@ -285,17 +286,13 @@ async def help_command(update: Update) -> None:
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await send(
-        f"{get_str('Welcome')} {update.effective_user.first_name} "
-        f"{get_str('to the file monitoring bot! Here\'s what you can do:')}\n"
+        f"{get_str("Welcome %s to the file monitoring bot! Here's what you can do:").format(update.effective_user.first_name)}\n\n"  # pylint: disable=line-too-long # noqa: E501
         "/start - "
         f"{get_str('Start the bot and get information on how to use it.')}\n"
         f"/stats - {get_str('View statistics on uploaded files.')}\n"
         f"/reset - {get_str('Reset the statistics.')}\n"
         f"/help - {get_str('Show this help message.')}\n"
-        f"{get_str(
-            "You can also send documents and receive summaries "
-            "on their size and more."
-        )}",
+        f"{get_str("You can also send documents and receive summaries on their size and more.")}",  # pylint: disable=line-too-long # noqa: E501
         reply_markup=reply_markup,
     )
 
@@ -326,11 +323,7 @@ async def start_command(update: Update) -> None:
     send = get_send_function(update)
 
     await send(
-        f"{get_str('Welcome')} {update.effective_user.first_name} "
-        f"{get_str(
-            "to the file monitoring bot! "
-            "Use the buttons below to navigate."
-        )}",
+        f"{get_str("Welcome %s to the file monitoring bot! Use the buttons below to navigate.").format(update.effective_user.first_name)}",   # pylint: disable=line-too-long # noqa: E501
         reply_markup=reply_markup,
     )
 

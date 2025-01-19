@@ -126,8 +126,7 @@ def main() -> None:
     if args.database and args.database != database_via_env:
         logger.warning(
             get_str(
-                "Environment variable DATABASE_FILE "
-                "is overridden by the command-line argument."
+                "Environment variable DATABASE_FILE is overridden by the command-line argument."  # pylint: disable=line-too-long # noqa: E501
             )
         )
 
@@ -140,8 +139,7 @@ def main() -> None:
     if args.debug and args.debug != debug_via_env:
         logger.warning(
             get_str(
-                "Environment variable DEBUG_MODE "
-                "is overridden by the command-line argument."
+                "Environment variable DEBUG_MODE is overridden by the command-line argument."  # pylint: disable=line-too-long # noqa: E501
             )
         )
 
@@ -156,8 +154,7 @@ def main() -> None:
     if args.token and args.token != token_via_env:
         logger.warning(
             get_str(
-                "Environment variable TELEGRAM_TOKEN "
-                "is overridden by the command-line argument."
+                "Environment variable TELEGRAM_TOKEN is overridden by the command-line argument."  # pylint: disable=line-too-long # noqa: E501
             )
         )
 
@@ -168,8 +165,7 @@ def main() -> None:
     if args.local and args.local != local_via_env:
         logger.warning(
             get_str(
-                "Environment variable LOCAL_SERVER_MODE "
-                "is overridden by the command-line argument."
+                "Environment variable LOCAL_SERVER_MODE is overridden by the command-line argument."  # pylint: disable=line-too-long # noqa: E501
             )
         )
 
