@@ -11,7 +11,7 @@ import humanize
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes
 
-from . import get_str, logger
+from . import get_str, logger, nget_str
 from .archive_utils import handle_archive, is_archive
 from .database import Database
 from .helper import get_send_function
@@ -176,41 +176,44 @@ async def stats(update: Update) -> None:
     try:
         user_id = update.effective_user.id
         user_stats = Database().get_user_data(user_id)
-        file_count = str(user_stats["file_count"])
-        # TODO: Add translations for pluralization
-        if int(file_count) > 1:
-            file_count += get_str(" files")
-        else:
-            file_count += get_str(" file")
 
-        msg = (
-            f"{get_str('Total file size')}: "
-            f"<code>{humanize.naturalsize(user_stats['total_size'])}</code>\n"
-            f"{get_str('Total download size')}: "
-            f"<code>{humanize.naturalsize(user_stats['total_download_size'])}"
-            f"</code>\n"
-            f"{get_str('Number of files uploaded')}: <code>{file_count}"
-            f"</code>\n"
-            f"{get_str('Streamable files')}: "
-            f"<code>{user_stats['streamable']} "
-        )
+        file_count = user_stats["file_count"]
+        file_count_str = nget_str(
+            "%d file", "%d files", file_count
+        ) % file_count
 
-        if user_stats["streamable"] > 1:
-            msg += f"{get_str('videos')}</code>\n"
-        else:
-            msg += f"{get_str('video')}</code>\n"
+        streamable_count = user_stats["streamable"]
+        streamable_count_str = nget_str(
+            "%d video", "%d videos", streamable_count
+        ) % streamable_count
 
-        msg += f"{get_str('Extensions')}:\n"
+        msg_parts = [
+            f"{get_str('Total file size: ')}"
+            f"<code>{humanize.naturalsize(user_stats['total_size'])}</code>",
+
+            f"{get_str('Total download size: ')}"
+            f"<code>{humanize.naturalsize(user_stats['total_download_size'])}</code>",  # pylint: disable=line-too-long # noqa: E501
+
+            f"{get_str('Number of files uploaded: ')}"
+            f"<code>{file_count_str}</code>",
+
+            f"{get_str('Streamable files: ')}"
+            f"<code>{streamable_count_str}</code>",
+
+            f"{get_str('File extensions:')}",
+        ]
+
         if not user_stats["extension_categories"]:
-            msg += f"<code>{get_str("No files uploaded yet.")}</code>\n"
+            msg_parts.append(
+                f"<code>{get_str('No files uploaded yet.')}</code>"
+            )
         else:
             for ext, count in user_stats["extension_categories"].items():
-                msg += f"<code>{ext}: {count} "
-                if count == 1:
-                    msg += get_str("file")
-                else:
-                    msg += get_str("files")
-                msg += "</code>\n"
+                msg_parts.append(
+                    f"<code>{ext}: {nget_str('%d file', '%d files', count) % count}</code>"  # pylint: disable=line-too-long # noqa: E501
+                )
+
+        msg = "\n".join(msg_parts)
 
         await send(msg, parse_mode="HTML", reply_markup=reply_markup)
     except (OSError, ValueError) as error:

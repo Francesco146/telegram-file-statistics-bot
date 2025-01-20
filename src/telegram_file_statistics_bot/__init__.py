@@ -59,6 +59,7 @@ match os.getenv("BOT_LANGUAGE"):
         it = gettext.translation("base", localedir="locales", languages=["it"])
         it.install()
         get_str = it.gettext
+        nget_str = it.ngettext
     case _:
         if os.getenv("BOT_LANGUAGE") != "en":
             logger.warning(
@@ -66,3 +67,4 @@ match os.getenv("BOT_LANGUAGE"):
                 os.getenv("BOT_LANGUAGE"),
             )
         get_str = gettext.gettext
+        nget_str = gettext.ngettext
