@@ -274,6 +274,8 @@ async def help_command(update: Update) -> None:
     if update.effective_user is None:
         return
 
+    first_name = update.effective_user.first_name
+
     send = get_send_function(update)
     keyboard = [
         [InlineKeyboardButton(HOME_LABEL, callback_data="start")],
@@ -286,7 +288,7 @@ async def help_command(update: Update) -> None:
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await send(
-        f"{get_str("Welcome %s to the file monitoring bot! Here's what you can do:").format(update.effective_user.first_name)}\n\n"  # pylint: disable=line-too-long # noqa: E501
+        f"{get_str("Welcome %s to the file monitoring bot! Here's what you can do:") % first_name}\n\n"  # pylint: disable=line-too-long # noqa: E501
         "/start - "
         f"{get_str('Start the bot and get information on how to use it.')}\n"
         f"/stats - {get_str('View statistics on uploaded files.')}\n"
@@ -310,6 +312,8 @@ async def start_command(update: Update) -> None:
     if update.effective_user is None:
         return
 
+    first_name = update.effective_user.first_name
+
     keyboard = [
         [InlineKeyboardButton(STATS_LABEL, callback_data="stats")],
         (
@@ -323,7 +327,7 @@ async def start_command(update: Update) -> None:
     send = get_send_function(update)
 
     await send(
-        f"{get_str("Welcome %s to the file monitoring bot! Use the buttons below to navigate.").format(update.effective_user.first_name)}",   # pylint: disable=line-too-long # noqa: E501
+        f"{get_str("Welcome %s to the file monitoring bot! Use the buttons below to navigate.") % first_name}",   # pylint: disable=line-too-long # noqa: E501
         reply_markup=reply_markup,
     )
 
