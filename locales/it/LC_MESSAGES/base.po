@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: Francesco146@users.noreply.github.com\n"
-"POT-Creation-Date: 2025-01-19 23:24+0100\n"
+"POT-Creation-Date: 2025-01-20 22:17+0100\n"
 "PO-Revision-Date: 2025-01-03 21:50+0100\n"
 "Last-Translator: Francesco146 <Francesco146@users.noreply.github.com>\n"
 "Language-Team: Italian <Francesco146@users.noreply.github.com>\n"
@@ -90,117 +90,105 @@ msgid "Error handling file."
 msgstr "Errore durante la gestione del file."
 
 #: src/telegram_file_statistics_bot/handlers.py:182
-msgid " files"
-msgstr " file"
-
-#: src/telegram_file_statistics_bot/handlers.py:184
-msgid " file"
-msgstr " file"
+#: src/telegram_file_statistics_bot/handlers.py:213
+#, python-format
+msgid "%d file"
+msgid_plural "%d files"
+msgstr[0] "%d file"
+msgstr[1] "%d file"
 
 #: src/telegram_file_statistics_bot/handlers.py:187
-msgid "Total file size"
-msgstr "Spazio totale dei file"
+#, python-format
+msgid "%d video"
+msgid_plural "%d videos"
+msgstr[0] "%d video"
+msgstr[1] "%d video"
 
-#: src/telegram_file_statistics_bot/handlers.py:189
-msgid "Total download size"
-msgstr "Spazio totale da scaricare"
-
-#: src/telegram_file_statistics_bot/handlers.py:192
-msgid "Number of files uploaded"
-msgstr "Numero di file caricati"
+#: src/telegram_file_statistics_bot/handlers.py:191
+msgid "Total file size: "
+msgstr "Spazio totale dei file: "
 
 #: src/telegram_file_statistics_bot/handlers.py:194
-msgid "Streamable files"
-msgstr "File riproducibili"
+msgid "Total download size: "
+msgstr "Spazio totale da scaricare: "
 
-#: src/telegram_file_statistics_bot/handlers.py:199
-msgid "videos"
-msgstr "video"
+#: src/telegram_file_statistics_bot/handlers.py:197
+msgid "Number of files uploaded: "
+msgstr "Numero di file caricati: "
 
-#: src/telegram_file_statistics_bot/handlers.py:201
-msgid "video"
-msgstr "video"
+#: src/telegram_file_statistics_bot/handlers.py:200
+msgid "Streamable files: "
+msgstr "File riproducibili: "
 
 #: src/telegram_file_statistics_bot/handlers.py:203
-msgid "Extensions"
-msgstr "Estensioni"
+msgid "File extensions:"
+msgstr "Estensioni:"
 
-#: src/telegram_file_statistics_bot/handlers.py:205
+#: src/telegram_file_statistics_bot/handlers.py:208
 msgid "No files uploaded yet."
 msgstr "Nessun file caricato ancora."
 
-#: src/telegram_file_statistics_bot/handlers.py:210
-msgid "file"
-msgstr "file"
-
-#: src/telegram_file_statistics_bot/handlers.py:212
-msgid "files"
-msgstr "file"
-
-#: src/telegram_file_statistics_bot/handlers.py:217
+#: src/telegram_file_statistics_bot/handlers.py:220
 #, python-format
 msgid "Error getting stats: %s"
 msgstr "Errore durante il recupero delle statistiche: %s"
 
-#: src/telegram_file_statistics_bot/handlers.py:219
+#: src/telegram_file_statistics_bot/handlers.py:222
 msgid "Error getting statistics."
 msgstr "Errore durante il recupero delle statistiche."
 
-#: src/telegram_file_statistics_bot/handlers.py:252
+#: src/telegram_file_statistics_bot/handlers.py:255
 msgid "Statistics reset successfully."
 msgstr "Statistiche reimpostate con successo."
 
-#: src/telegram_file_statistics_bot/handlers.py:256
+#: src/telegram_file_statistics_bot/handlers.py:259
 #, python-format
 msgid "Error resetting stats: %s"
 msgstr "Errore durante la reimpostazione delle statistiche: %s"
 
-#: src/telegram_file_statistics_bot/handlers.py:258
+#: src/telegram_file_statistics_bot/handlers.py:261
 msgid "Error resetting statistics."
 msgstr "Errore durante la reimpostazione delle statistiche."
 
-#: src/telegram_file_statistics_bot/handlers.py:289
-#, fuzzy, python-format
+#: src/telegram_file_statistics_bot/handlers.py:294
+#, python-format
 msgid "Welcome %s to the file monitoring bot! Here's what you can do:"
-msgstr "Benvenuto nel bot di monitoraggio dei file! Ecco cosa puoi fare:"
+msgstr "Benvenuto %s nel bot di monitoraggio dei file! Ecco cosa puoi fare:"
 
-#: src/telegram_file_statistics_bot/handlers.py:291
+#: src/telegram_file_statistics_bot/handlers.py:296
 msgid "Start the bot and get information on how to use it."
 msgstr "Avvia il bot e ottieni informazioni su come utilizzarlo."
 
-#: src/telegram_file_statistics_bot/handlers.py:292
+#: src/telegram_file_statistics_bot/handlers.py:297
 msgid "View statistics on uploaded files."
 msgstr "Visualizza le statistiche sui file caricati."
 
-#: src/telegram_file_statistics_bot/handlers.py:293
+#: src/telegram_file_statistics_bot/handlers.py:298
 msgid "Reset the statistics."
 msgstr "Reimposta le statistiche."
 
-#: src/telegram_file_statistics_bot/handlers.py:294
+#: src/telegram_file_statistics_bot/handlers.py:299
 msgid "Show this help message."
 msgstr "Mostra questo messaggio di aiuto."
 
-#: src/telegram_file_statistics_bot/handlers.py:295
+#: src/telegram_file_statistics_bot/handlers.py:300
 msgid ""
 "You can also send documents and receive summaries on their size and more."
 msgstr ""
 "Puoi anche inviare documenti e ricevere riepiloghi sulle loro dimensioni e "
 "altro."
 
-#: src/telegram_file_statistics_bot/handlers.py:326
-#, fuzzy, python-format
-msgid ""
-"Welcome %s to the file monitoring bot! Use the buttons below to navigate."
-msgstr ""
-"Benvenuto %s nel bot di monitoraggio dei file! Usa i pulsanti qui sotto per "
-"navigare."
+#: src/telegram_file_statistics_bot/handlers.py:333
+#, python-format
+msgid "Welcome %s to the file monitoring bot! Use the buttons below to navigate."
+msgstr "Benvenuto %s nel bot di monitoraggio dei file! Usa i pulsanti qui sotto per navigare."
 
-#: src/telegram_file_statistics_bot/handlers.py:360
+#: src/telegram_file_statistics_bot/handlers.py:367
 #, python-format
 msgid "Unknown action: %s"
 msgstr "Azione sconosciuta: %s"
 
-#: src/telegram_file_statistics_bot/handlers.py:362
+#: src/telegram_file_statistics_bot/handlers.py:369
 msgid "Unknown action. Please try again."
 msgstr "Azione sconosciuta. Riprova."
 
@@ -302,13 +290,3 @@ msgstr "  * debug: %s"
 #, python-format
 msgid "  * local: %s"
 msgstr "  * modalità locale: %s"
-
-#~ msgid "Welcome"
-#~ msgstr "Benvenuto"
-
-#, fuzzy, python-format
-#~ msgid "Processing file: '%(file)s' (%(size)s)"
-#~ msgstr "Processo il file: '%(file)s' (%(size)s)"
-
-#~ msgid "File name or size not found."
-#~ msgstr "Nome del file o dimensione non trovati."
