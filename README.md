@@ -1,6 +1,6 @@
 # Telegram Bot for File Statistics
-![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Francesco146/8ae3c1b877db1f59168ae0da0ad34d6b/raw/TFSB-pylint.json)
-![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Francesco146/dcac56daf752bcf2f36ba98144fa3595/raw/TFSB-pytest.json)
+[![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Francesco146/8ae3c1b877db1f59168ae0da0ad34d6b/raw/TFSB-pylint.json)](https://github.com/Francesco146/telegram-file-statistics-bot/actions/workflows/pylint.yml)
+[![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Francesco146/dcac56daf752bcf2f36ba98144fa3595/raw/TFSB-pytest.json)](https://github.com/Francesco146/telegram-file-statistics-bot/actions/workflows/unit-tests.yml)
 
 This is a Telegram bot that provides statistics about files sent by users. The bot can track the total size of files, the number of files, the number of streamable files (e.g., videos), and categorize files by their extensions.
 
@@ -86,7 +86,7 @@ This is a Telegram bot that provides statistics about files sent by users. The b
     TELEGRAM_API_ID='your-telegram-api-id'
     TELEGRAM_API_HASH='your-telegram-api-hash'
     # Optional
-    BOT_LANGUAGE='it' # Default is english
+    BOT_LANGUAGE='it'
     DEBUG_MODE='False'
     LOCAL_SERVER_MODE='False'
     DATABASE_FILE='file_statistics.db'
