@@ -3,8 +3,10 @@ This module contains tests for the helper module.
 """
 
 from unittest.mock import MagicMock
+
 import pytest
 from telegram import Update
+
 from telegram_file_statistics_bot.helper import get_send_function
 
 
@@ -34,8 +36,5 @@ def test_get_send_function_no_message_or_callback_query():
     update.message = None
     update.callback_query = None
 
-    with pytest.raises(
-        ValueError,
-        match="Update does not contain a message or callback query"
-    ):
+    with pytest.raises(ValueError):
         get_send_function(update)

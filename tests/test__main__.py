@@ -57,14 +57,14 @@ def mock_database():
         yield mock
 
 
-def test_run_bot_no_token(test_mock_logger):
+def test_run_bot_no_token(test_mock_get_str):
     """Tests the run_bot function without a token.
 
     Args:
-        test_mock_logger (MagicMock): The mocked logger.
+        test_mock_get_str (MagicMock): The mocked get_str.
     """
     run_bot("", False)
-    test_mock_logger.error.assert_called_with("Token not provided. Exiting...")
+    test_mock_get_str.assert_called_with("Token not provided. Exiting...")
 
 
 def test_run_bot_with_token(test_mock_application_builder):
@@ -127,14 +127,14 @@ def test_run_bot_local_mode(test_mock_application_builder):
 
 
 def test_run_bot_exception_handling(
-    test_mock_application_builder, test_mock_logger
+    test_mock_application_builder, test_mock_get_str
 ):
     """Tests the exception handling of the run_bot function.
 
     Args:
         - test_mock_application_builder (MagicMock):
         The mocked ApplicationBuilder.
-        - test_mock_logger (MagicMock): The mocked logger.
+        - test_mock_get_str (MagicMock): The mocked get_str.
     """
     mock_app = MagicMock()
 
@@ -147,8 +147,8 @@ def test_run_bot_exception_handling(
 
     run_bot("test_token", True)
 
-    test_mock_logger.info.assert_any_call("Bot is starting...")
-    test_mock_logger.error.assert_any_call(
+    test_mock_get_str.assert_any_call("Bot is starting...")
+    test_mock_get_str.assert_any_call(
         "Make sure the local server is running."
     )
 
