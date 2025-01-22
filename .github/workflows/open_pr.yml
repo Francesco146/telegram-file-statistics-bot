@@ -1,10 +1,10 @@
-name: Open a PR to main
+name: Open Pull Request to Master
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - dev
-  workflow_dispatch:
 
 env:
   MESSAGE: merge branch `${{ github.head_ref || github.ref_name }}` to `master`
