@@ -1,3 +1,10 @@
+## [1.1.1-dev.1](https://github.com/Francesco146/telegram-file-statistics-bot/compare/v1.1.0...v1.1.1-dev.1) (2025-01-22)
+
+
+### Bug Fixes
+
+* update workflow names for consistency ([9ba6b82](https://github.com/Francesco146/telegram-file-statistics-bot/commit/9ba6b8207ff8996d36d29a93be32acb901bff2d2))
+
 # [1.1.0](https://github.com/Francesco146/telegram-file-statistics-bot/compare/v1.0.0...v1.1.0) (2025-01-22)
 
 
