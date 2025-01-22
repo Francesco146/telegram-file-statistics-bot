@@ -1,3 +1,10 @@
+# [1.1.0-dev.3](https://github.com/Francesco146/telegram-file-statistics-bot/compare/v1.1.0-dev.2...v1.1.0-dev.3) (2025-01-22)
+
+
+### Features
+
+* update GitHub Actions workflows for improved PR handling and testing ([58f66ac](https://github.com/Francesco146/telegram-file-statistics-bot/commit/58f66ac4a835195a1e34688e8b16c656d14d671d))
+
 # [1.1.0-dev.2](https://github.com/Francesco146/telegram-file-statistics-bot/compare/v1.1.0-dev.1...v1.1.0-dev.2) (2025-01-22)
 
 
