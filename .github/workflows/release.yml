@@ -1,67 +1,44 @@
 name: Stable Release
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
+      - dev
 
 jobs:
   release:
+    name: Release
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Check for version bump commit
-        id: check-version-bump
-        run: |
-          if echo "${{ github.event.head_commit.message }}" | grep -qE '^chore: bump version to'; then
-            echo "version_bump=true" >> $GITHUB_ENV
-          else
-            echo "version_bump=false" >> $GITHUB_ENV
-          fi
-
-      - name: Stop if not a version bump
-        if: env.version_bump == 'false'
-        run: echo "This is not a version bump commit. Skipping release process."
-
-      - name: Extract version from commit message
-        id: extract-version
-        if: env.version_bump == 'true'
-        run: |
-          echo "${{ github.event.head_commit.message }}" | grep -oP '(?<=chore: bump version to )\S+' > version.txt
-          VERSION=$(cat version.txt)
-          echo "version=$VERSION" >> $GITHUB_ENV
-      
       - name: Install uv
-        if: env.version_bump == 'true'
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
           cache-dependency-glob: "**/pyproject.toml"
 
       - name: Install the project 
-        if: env.version_bump == 'true'
         run: uv sync
-      
       - name: Build the project
-        if: env.version_bump == 'true'
         run: uv build --wheel
 
-      - name: Tag the version
-        if: env.version_bump == 'true'
-        run: |
-          git tag ${{ env.version }}
-          git push origin ${{ env.version }}
-
-      - name: Create Stable Release
-        if: env.version_bump == 'true'
-        uses: softprops/action-gh-release@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          files: "dist/*.whl"
-          tag_name: ${{ env.version }}
-          name: "${{ env.version }}"
-          prerelease: false
+          node-version: "lts/*"
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm exec semantic-release
