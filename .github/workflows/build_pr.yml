@@ -1,4 +1,4 @@
-name: Build pull request
+name: Build Pull Request
 
 on:
   workflow_dispatch:
