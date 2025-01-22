@@ -1,3 +1,10 @@
+# [1.1.0-dev.2](https://github.com/Francesco146/telegram-file-statistics-bot/compare/v1.1.0-dev.1...v1.1.0-dev.2) (2025-01-22)
+
+
+### Features
+
+* add GitHub Actions workflow to open pull requests from dev to master ([b1ba7db](https://github.com/Francesco146/telegram-file-statistics-bot/commit/b1ba7db2c5168d72382502fa77a5beb8a01cf0b4))
+
 # [1.1.0-dev.1](https://github.com/Francesco146/telegram-file-statistics-bot/compare/v1.0.0...v1.1.0-dev.1) (2025-01-22)
 
 
