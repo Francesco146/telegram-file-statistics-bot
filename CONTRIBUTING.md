@@ -95,21 +95,17 @@ Wanted score is `10.00/10`.
 
 ## 🌐 Translations
 
-We use `msgfmt.py` and `pygettext.py` for handling translations. Here is how you can contribute to translations:
+We use `xgettext`, `msgmerge`, and `msgfmt` for handling translations. Here is how you can contribute to translations:
 
-1. Extract translatable strings using `pygettext.py`:
+1. Run all steps (extract translatable strings, update the POT file, update the `.po` files, and compile the `.po` files to `.mo` files):
     ```sh
-    pygettext.py -d base -o locales/base.pot src/
+    make all
     ```
 
-2. Update the `.po` files for the respective languages by editing the `locales/<lang>/LC_MESSAGES/base.po` file.
-
-3. Compile the `.po` files to `.mo` files using `msgfmt.py`:
+2. Verify that the translations are working correctly by running the bot and checking the translated messages. If you find any issues, use the built-in help command:
     ```sh
-    msgfmt.py -o locales/<lang>/LC_MESSAGES/base.mo locales/<lang>/LC_MESSAGES/base.po
+    make help
     ```
-
-4. Verify that the translations are working correctly by running the bot and checking the translated messages.
 
 ## ⚙️ GitHub Actions
 
