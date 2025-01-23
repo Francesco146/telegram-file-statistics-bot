@@ -12,9 +12,9 @@ GETTEXT_FUNCTION := get_str
 NGETTEXT_FUNCTION := nget_str
 BUG_REPORT_ADDRESS := Francesco146@users.noreply.github.com
 
-.PHONY: all update-pot update-po compile clean clean-backups
+.PHONY: all update-pot update-po compile clean help
 
-all: update-pot update-po compile clean-backups
+all: update-pot update-po compile
 
 # extract translatable strings and update the POT file
 update-pot:
