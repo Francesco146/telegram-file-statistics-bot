@@ -106,6 +106,7 @@ We use `xgettext`, `msgmerge`, and `msgfmt` for handling translations. Here is h
     ```sh
     make help
     ```
+    If you want to add a new language, you can add a new `.po` file in the `locales/<lang>` directory and run the `make all` command. It will generate the needed headers.
 
 ## ⚙️ GitHub Actions
 
