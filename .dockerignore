@@ -1,0 +1,59 @@
+# Ignore Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore virtual environments
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Ignore distribution and build directories
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Ignore local configuration files
+*.db
+*.lock
+
+# Ignore logs
+*.log
+
+# Ignore coverage reports
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Ignore documentation build directories
+docs/_build/
+
+# Ignore temporary files
+*.tmp
+*.temp
+*.swp
+*~
+
+# Ignore API data
+api/telegram-bot-api-data/
+
+# Ignore Dockerfile and docker-compose.yml
+Dockerfile
+docker-compose.yml
+
+# Ignore Git files
+.git/
+.gitignore
+
+# Ignore IDE files
+.vscode/
+.idea/
