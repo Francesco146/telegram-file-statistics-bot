@@ -28,6 +28,15 @@ update-pot:
 
 update-po: $(foreach lang,$(LANGUAGES),$(LOCALES_DIR)/$(lang)/LC_MESSAGES/base.po)
 $(LOCALES_DIR)/%/LC_MESSAGES/base.po: $(POT_FILE)
+	@if [ ! -s $@ ]; then \
+		echo '\033[1;33mWARNING: the file $@ was empty, adding default headers. Update the headers with all the missing informations.\033[0m'; \
+		echo '# WARNING: the file was empty, adding default headers' > $@; \
+		echo '# Update the headers with all the missing informations.' >> $@; \
+		echo 'msgid ""' >> $@; \
+		echo 'msgstr ""' >> $@; \
+		echo '"Content-Type: text/plain; charset=UTF-8\\n"' >> $@; \
+		echo '"Language: $*\\n"' >> $@; \
+	fi
 	msgmerge --update --no-fuzzy-matching --backup=none $@ $(POT_FILE)
 
 # compile the PO files into MO files for all languages
