@@ -1,3 +1,17 @@
+# [1.2.0](https://github.com/Francesco146/telegram-file-statistics-bot/compare/v1.1.1...v1.2.0) (2025-01-27)
+
+
+### Bug Fixes
+
+* **Make:** remove deprecated task ([dfb651c](https://github.com/Francesco146/telegram-file-statistics-bot/commit/dfb651c8969cb209895ad441db78062bf2c02391))
+
+
+### Features
+
+* **Docker:** add .dockerignore to exclude unnecessary files from Docker context ([79635ae](https://github.com/Francesco146/telegram-file-statistics-bot/commit/79635ae5a442c19647fff88c13ebeb32631436d3))
+* **Dockerfile:** copy only pyproject.toml for improved build context ([8f9002b](https://github.com/Francesco146/telegram-file-statistics-bot/commit/8f9002bd148b55c72e620c3fe1380d50eaf92ec5))
+* **Make:** add default headers for empty PO files ([4aee47b](https://github.com/Francesco146/telegram-file-statistics-bot/commit/4aee47b147ac26678427723abd4a92c54792e32d))
+
 # [1.2.0-dev.1](https://github.com/Francesco146/telegram-file-statistics-bot/compare/v1.1.1...v1.2.0-dev.1) (2025-01-23)
 
 
