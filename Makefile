@@ -12,9 +12,9 @@ GETTEXT_FUNCTION := get_str
 NGETTEXT_FUNCTION := nget_str
 BUG_REPORT_ADDRESS := Francesco146@users.noreply.github.com
 
-.PHONY: all update-pot update-po compile clean clean-backups
+.PHONY: all update-pot update-po compile clean help
 
-all: update-pot update-po compile clean-backups
+all: update-pot update-po compile
 
 # extract translatable strings and update the POT file
 update-pot:
@@ -28,6 +28,15 @@ update-pot:
 
 update-po: $(foreach lang,$(LANGUAGES),$(LOCALES_DIR)/$(lang)/LC_MESSAGES/base.po)
 $(LOCALES_DIR)/%/LC_MESSAGES/base.po: $(POT_FILE)
+	@if [ ! -s $@ ]; then \
+		echo '\033[1;33mWARNING: the file $@ was empty, adding default headers. Update the headers with all the missing informations.\033[0m'; \
+		echo '# WARNING: the file was empty, adding default headers' > $@; \
+		echo '# Update the headers with all the missing informations.' >> $@; \
+		echo 'msgid ""' >> $@; \
+		echo 'msgstr ""' >> $@; \
+		echo '"Content-Type: text/plain; charset=UTF-8\\n"' >> $@; \
+		echo '"Language: $*\\n"' >> $@; \
+	fi
 	msgmerge --update --no-fuzzy-matching --backup=none $@ $(POT_FILE)
 
 # compile the PO files into MO files for all languages

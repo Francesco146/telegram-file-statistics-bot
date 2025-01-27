@@ -8,7 +8,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && pip install uv --no-cache-dir
 
-COPY pyproject.toml uv.lock ./
+COPY pyproject.toml ./
 
 COPY src ./src
 

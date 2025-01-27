@@ -2,36 +2,33 @@
 
 Thank you for considering contributing to the Telegram File Statistics Bot! We welcome contributions from the community and are excited to see what you can bring to the project.
 
-## Table of Contents
-
 - [Contributing to Telegram File Statistics Bot](#contributing-to-telegram-file-statistics-bot)
-  - [Table of Contents](#table-of-contents)
-  - [Code of Conduct](#code-of-conduct)
-  - [How to Contribute](#how-to-contribute)
-    - [Reporting Bugs](#reporting-bugs)
-    - [Suggesting Features](#suggesting-features)
-    - [Submitting Pull Requests](#submitting-pull-requests)
-  - [Development Setup](#development-setup)
-  - [Running Tests](#running-tests)
-  - [Running the linting tools](#running-the-linting-tools)
-  - [Translations](#translations)
-  - [CI/CD](#cicd)
+  - [📜 Code of Conduct](#-code-of-conduct)
+  - [🤝 How to Contribute](#-how-to-contribute)
+    - [🐛 Reporting Bugs](#-reporting-bugs)
+    - [💡 Suggesting Features](#-suggesting-features)
+    - [🔄 Submitting Pull Requests](#-submitting-pull-requests)
+  - [🛠️ Development Setup](#️-development-setup)
+  - [✅ Running Tests](#-running-tests)
+  - [🧹 Running the linting tools](#-running-the-linting-tools)
+  - [🌐 Translations](#-translations)
+  - [⚙️ GitHub Actions](#️-github-actions)
 
-## Code of Conduct
+## 📜 Code of Conduct
 
 Please read our [Code of Conduct](CODE_OF_CONDUCT.md) to understand the standards we expect from our community.
 
-## How to Contribute
+## 🤝 How to Contribute
 
-### Reporting Bugs
+### 🐛 Reporting Bugs
 
 If you find a bug, please create an issue using the [bug report template](.github/ISSUE_TEMPLATE/bug_report.md). Provide as much detail as possible to help us understand and reproduce the issue.
 
-### Suggesting Features
+### 💡 Suggesting Features
 
 If you have an idea for a new feature, please create an issue using the [feature request template](.github/ISSUE_TEMPLATE/feature_request.md). Describe your idea in detail and explain why it would be beneficial to the project.
 
-### Submitting Pull Requests
+### 🔄 Submitting Pull Requests
 
 1. Fork the repository.
 2. Create a new branch for your feature or bugfix:
@@ -51,7 +48,7 @@ If you have an idea for a new feature, please create an issue using the [feature
     ```
 8. Create a pull request using the [pull request template](.github/pull_request_template.md).
 
-## Development Setup
+## 🛠️ Development Setup
 
 To set up the development environment, follow these steps:
 
@@ -80,7 +77,7 @@ To set up the development environment, follow these steps:
     uv sync --all-extras --dev
     ```
 
-## Running Tests
+## ✅ Running Tests
 
 To run the tests, use the following command:
 ```sh
@@ -88,7 +85,7 @@ uv run pytest
 ```
 Wanted passing tests are `100%`.
 
-## Running the linting tools
+## 🧹 Running the linting tools
 
 To run the linting tools, use the following command:
 ```sh
@@ -96,31 +93,27 @@ uv run pylint $(find src tests -name "*.py" -type f)
 ```
 Wanted score is `10.00/10`.
 
-## Translations
+## 🌐 Translations
 
-We use `msgfmt.py` and `pygettext.py` for handling translations. Here is how you can contribute to translations:
+We use `xgettext`, `msgmerge`, and `msgfmt` for handling translations. Here is how you can contribute to translations:
 
-1. Extract translatable strings using `pygettext.py`:
+1. Run all steps (extract translatable strings, update the POT file, update the `.po` files, and compile the `.po` files to `.mo` files):
     ```sh
-    pygettext.py -d base -o locales/base.pot src/
+    make all
     ```
 
-2. Update the `.po` files for the respective languages by editing the `locales/<lang>/LC_MESSAGES/base.po` file.
-
-3. Compile the `.po` files to `.mo` files using `msgfmt.py`:
+2. Verify that the translations are working correctly by running the bot and checking the translated messages. If you find any issues, use the built-in help command:
     ```sh
-    msgfmt.py -o locales/<lang>/LC_MESSAGES/base.mo locales/<lang>/LC_MESSAGES/base.po
+    make help
     ```
+    If you want to add a new language, you can add a new `.po` file in the `locales/<lang>` directory and run the `make all` command. It will generate the needed headers.
 
-4. Verify that the translations are working correctly by running the bot and checking the translated messages.
+## ⚙️ GitHub Actions
 
-## CI/CD
+This project utilizes GitHub Actions for automating continuous integration and deployment:
 
-This project uses GitHub Actions for continuous integration and deployment. The workflows are defined in the [`.github/workflows`](.github/workflows) directory:
-- [`nightly-build.yml`](.github/workflows/nightly-build.yml): Runs nightly builds, which releases a new version (pre-release) at each latest commit. In the release, it builds the wheel and uploads it to GitHub Releases, along with the source distribution. This workflow runs only if the latest commit is not a release commit.
-- [`release.yml`](.github/workflows/release.yml): Creates stable releases. It builds the wheel and uploads it to GitHub Releases, along with the source distribution. This workflow matches the commit message with the pattern `chore: bump version to <version>` to determine the version number, where `<version>` is something like `v*.*.*`.
-- [`pylint.yml`](.github/workflows/pylint.yml): Runs Pylint for code linting, and updates the badge in the README.
-- [`unit-tests.yml`](.github/workflows/unit-tests.yml): Runs unit tests using Pytest, and updates the badge in the README.
-
-
-Thank you for contributing to the Telegram File Statistics Bot!
+- **[Build Pull Request](.github/workflows/build_pr.yml)**: Executes automated checks and builds when a pull request is made to the `dev` branch.
+- **[Release](.github/workflows/release.yml)**: Handles deployments whenever changes are pushed to `master` or `dev`, or manually triggered.
+- **[Pytest](.github/workflows/pytest.yml)**: Runs unit tests with each code push, generating a badge to reflect test results.
+- **[Pylint](.github/workflows/pylint.yml)**: Performs code linting on every code push, creating a badge to indicate the status.
+- **[Create Pull Request](.github/workflows/open_pr.yml)**: Automatically generates a pull request from `dev` to `master` whenever new changes are pushed to `dev`, or triggered manually. 
