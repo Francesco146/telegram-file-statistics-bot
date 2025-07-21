@@ -51,15 +51,10 @@ async def handle_file(
     8. Logs and sends an error message if an exception occurs.
     """
 
-    if not (
-        update.effective_user and
-        update.message and
-        update.message.document
-    ):
+    if not (update.effective_user and update.message and update.message.document):
         return
 
     try:
-
         user_id = update.effective_user.id
         file = update.message.document
         file_size = file.file_size
@@ -73,8 +68,7 @@ async def handle_file(
                 await update.message.reply_text(
                     get_str("Archives are not supported in non-local mode.")
                 )
-                logger.warning(
-                    get_str("Archives are not supported in non-local mode."))
+                logger.warning(get_str("Archives are not supported in non-local mode."))
                 return
 
             await update.message.reply_text(
@@ -82,29 +76,27 @@ async def handle_file(
                 f"{get_str('This may take some time.')}"
             )
             logger.debug(
-                f"{get_str("Processing archive")}: '%s' (%s)",
+                f"{get_str('Processing archive')}: '%s' (%s)",
                 file_name,
                 humanize.naturalsize(file_size),
             )
             try:
                 await handle_archive(update, context, file.file_id)
             except ValueError:
-                await update.message.reply_text(
-                    get_str("Error handling zip file.")
-                )
+                await update.message.reply_text(get_str("Error handling zip file."))
                 return
             keyboard = [
                 [InlineKeyboardButton(STATS_LABEL, callback_data="stats")],
             ]
             reply_markup = InlineKeyboardMarkup(keyboard)
             await update.message.reply_text(
-                f"{get_str("Archive received")}: '{file_name}'.",
+                f"{get_str('Archive received')}: '{file_name}'.",
                 reply_markup=reply_markup,
             )
             return
 
         logger.debug(
-            f"{get_str("Processing file")}: '%s' (%s)",
+            f"{get_str('Processing file')}: '%s' (%s)",
             file_name,
             humanize.naturalsize(file_size),
         )
@@ -178,39 +170,29 @@ async def stats(update: Update) -> None:
         user_stats = Database().get_user_data(user_id)
 
         file_count = user_stats["file_count"]
-        file_count_str = nget_str(
-            "%d file", "%d files", file_count
-        ) % file_count
+        file_count_str = nget_str("%d file", "%d files", file_count) % file_count
 
         streamable_count = user_stats["streamable"]
-        streamable_count_str = nget_str(
-            "%d video", "%d videos", streamable_count
-        ) % streamable_count
+        streamable_count_str = (
+            nget_str("%d video", "%d videos", streamable_count) % streamable_count
+        )
 
         msg_parts = [
             f"{get_str('Total file size: ')}"
             f"<code>{humanize.naturalsize(user_stats['total_size'])}</code>",
-
             f"{get_str('Total download size: ')}"
-            f"<code>{humanize.naturalsize(user_stats['total_download_size'])}</code>",  # pylint: disable=line-too-long # noqa: E501
-
-            f"{get_str('Number of files uploaded: ')}"
-            f"<code>{file_count_str}</code>",
-
-            f"{get_str('Streamable files: ')}"
-            f"<code>{streamable_count_str}</code>",
-
+            f"<code>{humanize.naturalsize(user_stats['total_download_size'])}</code>",
+            f"{get_str('Number of files uploaded: ')}<code>{file_count_str}</code>",
+            f"{get_str('Streamable files: ')}<code>{streamable_count_str}</code>",
             f"{get_str('File extensions:')}",
         ]
 
         if not user_stats["extension_categories"]:
-            msg_parts.append(
-                f"<code>{get_str('No files uploaded yet.')}</code>"
-            )
+            msg_parts.append(f"<code>{get_str('No files uploaded yet.')}</code>")
         else:
             for ext, count in user_stats["extension_categories"].items():
                 msg_parts.append(
-                    f"<code>{ext}: {nget_str('%d file', '%d files', count) % count}</code>"  # pylint: disable=line-too-long # noqa: E501
+                    f"<code>{ext}: {nget_str('%d file', '%d files', count) % count}</code>"
                 )
 
         msg = "\n".join(msg_parts)
@@ -218,10 +200,7 @@ async def stats(update: Update) -> None:
         await send(msg, parse_mode="HTML", reply_markup=reply_markup)
     except (OSError, ValueError) as error:
         logger.error(get_str("Error getting stats: %s"), error)
-        await send(
-            get_str("Error getting statistics."),
-            reply_markup=reply_markup
-        )
+        await send(get_str("Error getting statistics."), reply_markup=reply_markup)
 
 
 async def reset(update: Update) -> None:
@@ -251,16 +230,10 @@ async def reset(update: Update) -> None:
     reply_markup = InlineKeyboardMarkup(keyboard)
     try:
         Database().reset_user_data(user_id)
-        await send(
-            get_str("Statistics reset successfully."),
-            reply_markup=reply_markup
-        )
+        await send(get_str("Statistics reset successfully."), reply_markup=reply_markup)
     except (OSError, ValueError) as error:
         logger.error(get_str("Error resetting stats: %s"), error)
-        await send(
-            get_str("Error resetting statistics."),
-            reply_markup=reply_markup
-        )
+        await send(get_str("Error resetting statistics."), reply_markup=reply_markup)
 
 
 async def help_command(update: Update) -> None:
@@ -291,13 +264,13 @@ async def help_command(update: Update) -> None:
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await send(
-        f"{get_str("Welcome %s to the file monitoring bot! Here's what you can do:") % first_name}\n\n"  # pylint: disable=line-too-long # noqa: E501
+        f"{get_str("Welcome %s to the file monitoring bot! Here's what you can do:") % first_name}\n\n"
         "/start - "
         f"{get_str('Start the bot and get information on how to use it.')}\n"
         f"/stats - {get_str('View statistics on uploaded files.')}\n"
         f"/reset - {get_str('Reset the statistics.')}\n"
         f"/help - {get_str('Show this help message.')}\n"
-        f"{get_str("You can also send documents and receive summaries on their size and more.")}",  # pylint: disable=line-too-long # noqa: E501
+        f"{get_str('You can also send documents and receive summaries on their size and more.')}",
         reply_markup=reply_markup,
     )
 
@@ -330,7 +303,7 @@ async def start_command(update: Update) -> None:
     send = get_send_function(update)
 
     await send(
-        f"{get_str("Welcome %s to the file monitoring bot! Use the buttons below to navigate.") % first_name}",   # pylint: disable=line-too-long # noqa: E501
+        f"{get_str('Welcome %s to the file monitoring bot! Use the buttons below to navigate.') % first_name}",
         reply_markup=reply_markup,
     )
 
@@ -365,6 +338,4 @@ async def callback_query_handler(update: Update) -> None:
             await start_command(update)
         case _:
             logger.warning(get_str("Unknown action: %s"), query.data)
-            await query.edit_message_text(
-                get_str("Unknown action. Please try again.")
-            )
+            await query.edit_message_text(get_str("Unknown action. Please try again."))

@@ -29,6 +29,4 @@ def get_send_function(update: Update) -> Callable:
     if update.message:
         return update.message.reply_text
 
-    raise ValueError(
-        get_str("Update does not contain a message or callback query")
-    )
+    raise ValueError(get_str("Update does not contain a message or callback query"))

@@ -62,7 +62,8 @@ def test_init_db(test_db):
             SELECT name
             FROM sqlite_master
             WHERE type='table' AND name='user_data'
-            """)
+            """
+        )
         table = cursor.fetchone()
     assert table is not None
 
@@ -80,7 +81,7 @@ def test_get_user_data(test_db):
         "total_download_size": 0,
         "file_count": 0,
         "streamable": 0,
-        "extension_categories": {}
+        "extension_categories": {},
     }
     assert user_data == expected_data
 
@@ -99,7 +100,7 @@ def test_reset_user_data(test_db):
         "total_download_size": 0,
         "file_count": 0,
         "streamable": 0,
-        "extension_categories": {}
+        "extension_categories": {},
     }
     assert user_data == expected_data
 
@@ -116,7 +117,7 @@ def test_update_user_data(test_db):
         "total_download_size": 50,
         "file_count": 10,
         "streamable": 5,
-        "extension_categories": {"pdf": 5, "docx": 5}
+        "extension_categories": {"pdf": 5, "docx": 5},
     }
     test_db.update_user_data(user_id, new_data)
     user_data = test_db.get_user_data(user_id)
@@ -136,7 +137,7 @@ def test_is_stats_empty(test_db):
         "total_download_size": 50,
         "file_count": 10,
         "streamable": 5,
-        "extension_categories": {"pdf": 5, "docx": 5}
+        "extension_categories": {"pdf": 5, "docx": 5},
     }
     test_db.update_user_data(user_id, new_data)
     assert not test_db.is_stats_empty(user_id)

@@ -73,13 +73,9 @@ async def handle_archive(
         with tempfile.TemporaryDirectory() as temp_dir:
             extract_archive(archive_absolute_path, temp_dir)
 
-            await process_extracted_files(
-                temp_dir, user_id, user_stats, update
-            )
+            await process_extracted_files(temp_dir, user_id, user_stats, update)
 
-            user_stats["total_download_size"] += os.path.getsize(
-                archive_absolute_path
-            )
+            user_stats["total_download_size"] += os.path.getsize(archive_absolute_path)
 
             Database().update_user_data(user_id, user_stats)
     except (zipfile.BadZipFile, OSError, ValueError) as error:
@@ -115,10 +111,7 @@ def extract_archive(archive_path: str, temp_dir: str) -> None:
 
 
 async def process_extracted_files(
-    temp_dir: str,
-    user_id: int,
-    user_stats: Dict,
-    update: Update
+    temp_dir: str, user_id: int, user_stats: Dict, update: Update
 ) -> None:
     """Process the extracted files from the archive.
 
@@ -138,7 +131,7 @@ async def process_extracted_files(
             file_path = os.path.join(root, file)
             file_size = os.path.getsize(file_path)
             logger.debug(
-                f"{get_str("Processing file")}: '%s' (%s)",
+                f"{get_str('Processing file')}: '%s' (%s)",
                 file,
                 humanize.naturalsize(file_size),
             )
@@ -151,9 +144,7 @@ async def process_extracted_files(
             )
 
 
-def update_user_statistics(
-    user_stats: Dict, file: str, file_size: int
-) -> None:
+def update_user_statistics(user_stats: Dict, file: str, file_size: int) -> None:
     """Update the user statistics based on the processed file.
 
     Args:

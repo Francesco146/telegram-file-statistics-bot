@@ -85,8 +85,7 @@ class Database:
         """
         with self._connect() as conn:
             cursor = conn.cursor()
-            cursor.execute(
-                "SELECT * FROM user_data WHERE user_id=?", (user_id,))
+            cursor.execute("SELECT * FROM user_data WHERE user_id=?", (user_id,))
             row = cursor.fetchone()
 
         if not row:
@@ -130,9 +129,7 @@ class Database:
             )
             conn.commit()
 
-    def update_user_data(
-        self, user_id: int, data: Dict
-    ) -> None:
+    def update_user_data(self, user_id: int, data: Dict) -> None:
         """
         Updates the user data in the database.
 
