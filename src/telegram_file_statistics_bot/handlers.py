@@ -37,7 +37,7 @@ async def ignore_extensions_command(
     send = get_send_function(update)
     args = context.args if hasattr(context, "args") else []
     db = Database()
-    user_stats = db.get_user_data(user_id)
+    user_stats = db[user_id]
     ignored: list[str] = user_stats.get("ignored_extensions", [])
 
     if not args:
@@ -55,7 +55,7 @@ async def ignore_extensions_command(
             if ext in ignored:
                 ignored.remove(ext)
                 removed.append(ext)
-        db.update_user_data(user_id, {**user_stats, "ignored_extensions": ignored})
+        db[user_id] = {**user_stats, "ignored_extensions": ignored}
         if removed:
             await send(f"Removed from ignore list: {', '.join(removed)}")
         else:
@@ -69,7 +69,7 @@ async def ignore_extensions_command(
         if ext not in ignored:
             ignored.append(ext)
             added.append(ext)
-    db.update_user_data(user_id, {**user_stats, "ignored_extensions": ignored})
+    db[user_id] = {**user_stats, "ignored_extensions": ignored}
     if added:
         await send(f"Added to ignore list: {', '.join(added)}")
     else:
@@ -118,7 +118,7 @@ async def handle_file(
             return
 
         # Check ignored extensions
-        user_stats = Database().get_user_data(user_id)
+        user_stats = Database()[user_id]
         ignored = user_stats.get("ignored_extensions", [])
         extension = os.path.splitext(file_name)[1].lower()
         if extension in ignored:
@@ -177,7 +177,7 @@ async def handle_file(
             ext_cats[extension] = {"count": 0, "size": 0}
         ext_cats[extension]["count"] += 1
         ext_cats[extension]["size"] += file_size
-        Database().update_user_data(user_id, user_stats)
+        Database()[user_id] = user_stats
         keyboard = [
             [InlineKeyboardButton(STATS_LABEL, callback_data="stats")],
         ]
@@ -230,7 +230,7 @@ async def stats(update: Update) -> None:
 
     try:
         user_id = update.effective_user.id
-        user_stats = Database().get_user_data(user_id)
+        user_stats = Database()[user_id]
 
         file_count = user_stats["file_count"]
         file_count_str = nget_str("%d file", "%d files", file_count) % file_count
@@ -290,7 +290,7 @@ async def remove_extensions_command(
     send = get_send_function(update)
     args = context.args if hasattr(context, "args") else []
     db = Database()
-    user_stats = db.get_user_data(user_id)
+    user_stats = db[user_id]
     ext_cats = user_stats.get("extension_categories", {})
 
     if not args:

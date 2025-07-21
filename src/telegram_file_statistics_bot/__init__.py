@@ -43,6 +43,12 @@ class CustomFormatter(logging.Formatter):
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)
 
+    def __str__(self):
+        return f"<CustomFormatter log_format='{self.log_format}'>"
+
+    def __repr__(self):
+        return f"CustomFormatter(log_format={self.log_format!r})"
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

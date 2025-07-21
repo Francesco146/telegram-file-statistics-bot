@@ -75,7 +75,7 @@ def test_get_user_data(test_db):
         test_db (Database): A Database instance for testing.
     """
     user_id = 1
-    user_data = test_db.get_user_data(user_id)
+    user_data = test_db[user_id]
     expected_data = {
         "total_size": 0,
         "total_download_size": 0,
@@ -95,7 +95,7 @@ def test_reset_user_data(test_db):
     """
     user_id = 1
     test_db.reset_user_data(user_id)
-    user_data = test_db.get_user_data(user_id)
+    user_data = test_db[user_id]
     expected_data = {
         "total_size": 0,
         "total_download_size": 0,
@@ -122,8 +122,8 @@ def test_update_user_data(test_db):
         "extension_categories": {"pdf": 5, "docx": 5},
         "ignored_extensions": [],
     }
-    test_db.update_user_data(user_id, new_data)
-    user_data = test_db.get_user_data(user_id)
+    test_db[user_id] = new_data
+    user_data = test_db[user_id]
     assert user_data == new_data
 
 
@@ -142,7 +142,7 @@ def test_is_stats_empty(test_db):
         "streamable": 5,
         "extension_categories": {"pdf": 5, "docx": 5},
     }
-    test_db.update_user_data(user_id, new_data)
+    test_db[user_id] = new_data
     assert not test_db.is_stats_empty(user_id)
 
 
@@ -160,10 +160,10 @@ def test_remove_extensions_from_user_updates_count_and_size(test_db):
         },
         "ignored_extensions": [],
     }
-    test_db.update_user_data(user_id, new_data)
+    test_db[user_id] = new_data
     # Remove .mp3 extension
     test_db.remove_extensions_from_user(user_id, [".mp3"])
-    user_data = test_db.get_user_data(user_id)
+    user_data = test_db[user_id]
     assert user_data["file_count"] == 2  # Only .zip files remain
     assert user_data["total_size"] == 100  # Only .zip size remains
     assert user_data["total_download_size"] == 100  # Only .zip download size remains

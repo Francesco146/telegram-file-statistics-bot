@@ -133,10 +133,10 @@ async def test_handle_file_non_archive(
     test_mock_update.message.document.file_name = "test.txt"
     test_mock_update.message.document.file_size = 1024
     await handle_file(test_mock_update, test_mock_context, local_mode=False)
-    test_mock_database().get_user_data.assert_called_once_with(
+    test_mock_database().__getitem__.assert_called_once_with(
         test_mock_update.effective_user.id
     )
-    test_mock_database().update_user_data.assert_called_once()
+    test_mock_database().__setitem__.assert_called_once()
 
 
 @pytest.mark.asyncio

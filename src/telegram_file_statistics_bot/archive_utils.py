@@ -61,7 +61,7 @@ async def handle_archive(
 
     try:
         user_id = update.effective_user.id
-        user_stats = Database().get_user_data(user_id)
+        user_stats = Database()[user_id]
 
         file = await context.bot.get_file(file_id)
 
@@ -77,7 +77,7 @@ async def handle_archive(
 
             user_stats["total_download_size"] += os.path.getsize(archive_absolute_path)
 
-            Database().update_user_data(user_id, user_stats)
+            Database()[user_id] = user_stats
     except (zipfile.BadZipFile, OSError, ValueError) as error:
         logger.error(get_str("Error handling zip file: %s"), error)
         raise error
@@ -144,7 +144,7 @@ async def process_extracted_files(
             )
 
             update_user_statistics(user_stats, file, file_size)
-            Database().update_user_data(user_id, user_stats)
+            Database()[user_id] = user_stats
             await update.message.reply_text(
                 f"{get_str('File received via archive')}: '{file}' "
                 f"({humanize.naturalsize(file_size)})."

@@ -12,38 +12,6 @@ from . import get_str
 
 
 class Database:
-    def remove_extensions_from_user(self, user_id: int, extensions: list[str]) -> None:
-        """
-        Remove specified extensions from a user's extension_categories and update stats accordingly.
-
-        Args:
-            user_id (int): The ID of the user.
-            extensions (list[str]): List of extensions to remove (e.g., ['.exe', '.mp3']).
-        """
-        user_data = self.get_user_data(user_id)
-        ext_cats = user_data.get("extension_categories", {})
-        removed = False
-        for ext in extensions:
-            if ext in ext_cats:
-                ext_info = ext_cats.pop(ext)
-                count = ext_info.get("count", 0)
-                size = ext_info.get("size", 0)
-                user_data["file_count"] = max(
-                    0,
-                    user_data["file_count"] - (count if isinstance(count, int) else 0),
-                )
-                user_data["total_size"] = max(
-                    0, user_data["total_size"] - (size if isinstance(size, int) else 0)
-                )
-                user_data["total_download_size"] = max(
-                    0,
-                    user_data["total_download_size"]
-                    - (size if isinstance(size, int) else 0),
-                )
-                removed = True
-        if removed:
-            self.update_user_data(user_id, user_data)
-
     """
     A singleton class to interact with the SQLite database for the
     Telegram Bot for File Statistics.
@@ -173,6 +141,38 @@ class Database:
             )
             conn.commit()
 
+    def remove_extensions_from_user(self, user_id: int, extensions: list[str]) -> None:
+        """
+        Remove specified extensions from a user's extension_categories and update stats accordingly.
+
+        Args:
+            user_id (int): The ID of the user.
+            extensions (list[str]): List of extensions to remove (e.g., ['.exe', '.mp3']).
+        """
+        user_data = self.get_user_data(user_id)
+        ext_cats = user_data.get("extension_categories", {})
+        removed = False
+        for ext in extensions:
+            if ext in ext_cats:
+                ext_info = ext_cats.pop(ext)
+                count = ext_info.get("count", 0)
+                size = ext_info.get("size", 0)
+                user_data["file_count"] = max(
+                    0,
+                    user_data["file_count"] - (count if isinstance(count, int) else 0),
+                )
+                user_data["total_size"] = max(
+                    0, user_data["total_size"] - (size if isinstance(size, int) else 0)
+                )
+                user_data["total_download_size"] = max(
+                    0,
+                    user_data["total_download_size"]
+                    - (size if isinstance(size, int) else 0),
+                )
+                removed = True
+        if removed:
+            self.update_user_data(user_id, user_data)
+
     def update_user_data(self, user_id: int, data: Dict) -> None:
         """
         Updates the user data in the database.
@@ -221,3 +221,66 @@ class Database:
                 not user_data["extension_categories"],
             ]
         )
+
+    def __str__(self):
+        return f"<Database db_path='{self.db_path}'>"
+
+    def __repr__(self):
+        return f"Database(db_path={self.db_path!r})"
+
+    def __len__(self):
+        # Number of users in the database
+        with self._connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM user_data")
+            return cursor.fetchone()[0]
+
+    def __getitem__(self, user_id):
+        # Always return a dict, like get_user_data
+        return self.get_user_data(user_id)
+
+    def __setitem__(self, user_id, value):
+        self.update_user_data(user_id, value)
+
+    def __contains__(self, user_id):
+        with self._connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT 1 FROM user_data WHERE user_id=?", (user_id,))
+            return cursor.fetchone() is not None
+
+    def __delitem__(self, user_id):
+        with self._connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM user_data WHERE user_id=?", (user_id,))
+            conn.commit()
+
+    def __enter__(self):
+        self._conn = self._connect()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if hasattr(self, "_conn"):
+            self._conn.close()
+            del self._conn
+
+    def __iter__(self):
+        with self._connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT user_id FROM user_data")
+            self._user_ids = [row[0] for row in cursor.fetchall()]
+        self._iter_index = 0
+        return self
+
+    def __next__(self):
+        if not hasattr(self, "_user_ids"):
+            self.__iter__()
+        if self._iter_index >= len(self._user_ids):
+            del self._user_ids
+            raise StopIteration
+        user_id = self._user_ids[self._iter_index]
+        self._iter_index += 1
+        return user_id
+
+    def __missing__(self, user_id):
+        # Only called if used as a dict subclass, but provided for completeness
+        return self.get_user_data(user_id)
