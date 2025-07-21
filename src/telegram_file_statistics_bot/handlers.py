@@ -85,9 +85,7 @@ async def ignore_extensions_command(
     await add_ignored()
 
 
-async def toggle_detailed_sizes_command(
-    update: Update, context: ContextTypes.DEFAULT_TYPE
-) -> None:
+async def toggle_detailed_sizes_command(update: Update) -> None:
     """
     Allows the user to toggle between human-readable and detailed (raw byte) file size display.
     Usage:
