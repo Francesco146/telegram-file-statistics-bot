@@ -1,3 +1,10 @@
+# [1.4.0-dev.1](https://github.com/Francesco146/telegram-file-statistics-bot/compare/v1.3.0...v1.4.0-dev.1) (2025-07-21)
+
+
+### Features
+
+* add toggle command for detailed file size display and update size formatting ([0d7cccb](https://github.com/Francesco146/telegram-file-statistics-bot/commit/0d7cccb1fd21293138174795e55d2fae0043fcb8))
+
 # [1.3.0](https://github.com/Francesco146/telegram-file-statistics-bot/compare/v1.2.0...v1.3.0) (2025-07-21)
 
 
