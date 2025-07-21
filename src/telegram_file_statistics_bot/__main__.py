@@ -22,6 +22,7 @@ from .handlers import (
     callback_query_handler,
     handle_file,
     help_command,
+    ignore_extensions_command,
     reset,
     start_command,
     stats,
@@ -84,6 +85,9 @@ def run_bot(token: str, local: bool) -> None:
     )
     application.add_handler(CommandHandler("stats", lambda update, _: stats(update)))
     application.add_handler(CommandHandler("reset", lambda update, _: reset(update)))
+    application.add_handler(
+        CommandHandler("ignore_extensions", ignore_extensions_command)
+    )
     application.add_handler(
         CallbackQueryHandler(lambda update, _: callback_query_handler(update))
     )

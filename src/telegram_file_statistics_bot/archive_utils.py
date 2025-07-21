@@ -126,8 +126,15 @@ async def process_extracted_files(
     if update.message is None:
         return
 
+    ignored = user_stats.get("ignored_extensions", [])
     for root, _, files in os.walk(temp_dir):
         for file in files:
+            extension = os.path.splitext(file)[1].lower()
+            if extension in ignored:
+                logger.info(
+                    f"File '{file}' inside archive ignored due to its extension ({extension})."
+                )
+                continue
             file_path = os.path.join(root, file)
             file_size = os.path.getsize(file_path)
             logger.debug(

@@ -1,7 +1,6 @@
 """
 This module contains the handlers for various bot commands and messages.
-It includes functions to handle files, user statistics, and other
-bot interactions.
+It includes functions to handle files, user statistics, and other bot interactions.
 """
 
 import mimetypes
@@ -20,6 +19,61 @@ HOME_LABEL = get_str("🏠 Home")
 STATS_LABEL = get_str("📊 View Statistics")
 RESET_LABEL = get_str("⌫ Reset Statistics")
 HELP_LABEL = get_str("🆘 Help")
+
+
+async def ignore_extensions_command(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    """
+    Allows the user to add, remove, or list ignored file extensions.
+    Usage:
+        /ignore_extensions .exe .mp3   # Add to ignore list
+        /ignore_extensions -rm .exe    # Remove from ignore list
+        /ignore_extensions             # List ignored extensions
+    """
+    if update.effective_user is None:
+        return
+    user_id = update.effective_user.id
+    send = get_send_function(update)
+    args = context.args if hasattr(context, "args") else []
+    db = Database()
+    user_stats = db.get_user_data(user_id)
+    ignored: list[str] = user_stats.get("ignored_extensions", [])
+
+    if not args:
+        if ignored:
+            await send(f"Ignored extensions: {', '.join(ignored)}")
+        else:
+            await send("No ignored extensions set.")
+        return
+
+    if args[0] == "-rm":
+        # Remove extensions
+        removed = []
+        for ext in args[1:]:
+            ext = ext.lower() if ext.startswith(".") else f".{ext.lower()}"
+            if ext in ignored:
+                ignored.remove(ext)
+                removed.append(ext)
+        db.update_user_data(user_id, {**user_stats, "ignored_extensions": ignored})
+        if removed:
+            await send(f"Removed from ignore list: {', '.join(removed)}")
+        else:
+            await send("No matching extensions found in ignore list.")
+        return
+
+    # Add extensions
+    added = []
+    for ext in args:
+        ext = ext.lower() if ext.startswith(".") else f".{ext.lower()}"
+        if ext not in ignored:
+            ignored.append(ext)
+            added.append(ext)
+    db.update_user_data(user_id, {**user_stats, "ignored_extensions": ignored})
+    if added:
+        await send(f"Added to ignore list: {', '.join(added)}")
+    else:
+        await send("No new extensions added.")
 
 
 async def handle_file(
@@ -63,6 +117,16 @@ async def handle_file(
         if not file_name or not file_size:
             return
 
+        # Check ignored extensions
+        user_stats = Database().get_user_data(user_id)
+        ignored = user_stats.get("ignored_extensions", [])
+        extension = os.path.splitext(file_name)[1].lower()
+        if extension in ignored:
+            await update.message.reply_text(
+                f"File '{file_name}' ignored due to its extension ({extension})."
+            )
+            return
+
         if is_archive(file_name):
             if not local_mode:
                 await update.message.reply_text(
@@ -100,7 +164,6 @@ async def handle_file(
             file_name,
             humanize.naturalsize(file_size),
         )
-        user_stats = Database().get_user_data(user_id)
 
         user_stats["total_size"] += file_size
         user_stats["total_download_size"] += file_size
@@ -110,7 +173,6 @@ async def handle_file(
         if mime_type and mime_type.startswith("video"):
             user_stats["streamable"] += 1
 
-        extension = os.path.splitext(file_name)[1].lower()
         user_stats["extension_categories"].setdefault(extension, 0)
         user_stats["extension_categories"][extension] += 1
 
@@ -269,6 +331,7 @@ async def help_command(update: Update) -> None:
         f"{get_str('Start the bot and get information on how to use it.')}\n"
         f"/stats - {get_str('View statistics on uploaded files.')}\n"
         f"/reset - {get_str('Reset the statistics.')}\n"
+        f"/ignore_extensions - {get_str('Add, remove, or list ignored file extensions. Example: /ignore_extensions .exe .mp3 or /ignore_extensions -rm .exe')}\n"
         f"/help - {get_str('Show this help message.')}\n"
         f"{get_str('You can also send documents and receive summaries on their size and more.')}",
         reply_markup=reply_markup,
