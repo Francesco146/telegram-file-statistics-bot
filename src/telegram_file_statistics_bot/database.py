@@ -155,19 +155,16 @@ class Database:
         for ext in extensions:
             if ext in ext_cats:
                 ext_info = ext_cats.pop(ext)
-                count = ext_info.get("count", 0)
-                size = ext_info.get("size", 0)
+                count = int(ext_info.get("count", 0))
+                size = int(ext_info.get("size", 0))
                 user_data["file_count"] = max(
                     0,
-                    user_data["file_count"] - (count if isinstance(count, int) else 0),
+                    user_data["file_count"] - count,
                 )
-                user_data["total_size"] = max(
-                    0, user_data["total_size"] - (size if isinstance(size, int) else 0)
-                )
+                user_data["total_size"] = max(0, user_data["total_size"] - size)
                 user_data["total_download_size"] = max(
                     0,
-                    user_data["total_download_size"]
-                    - (size if isinstance(size, int) else 0),
+                    user_data["total_download_size"] - size,
                 )
                 removed = True
         if removed:
