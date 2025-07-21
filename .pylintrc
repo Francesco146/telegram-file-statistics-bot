@@ -1,5 +1,5 @@
 [MASTER]
-ignore=tests
+ignore-paths=tests
 init-hook='import sys; sys.path.append("src")'
 jobs=1
 load-plugins=
