@@ -18,9 +18,7 @@ def mock_application_builder():
     Yields:
         MagicMock: A mocked ApplicationBuilder for testing.
     """
-    with patch(
-        "telegram_file_statistics_bot.__main__.ApplicationBuilder"
-    ) as mock:
+    with patch("telegram_file_statistics_bot.__main__.ApplicationBuilder") as mock:
         yield mock
 
 
@@ -96,14 +94,18 @@ def test_run_bot_local_mode(test_mock_application_builder):
     """
     mock_app = MagicMock()
     test_mock_application_builder.return_value = MagicMock(
-        token=MagicMock(return_value=MagicMock(
-            local_mode=MagicMock(return_value=MagicMock(
-                base_url=MagicMock(),
-                base_file_url=MagicMock(),
-                read_timeout=MagicMock(),
-                build=MagicMock(return_value=mock_app),
-            ))
-        ))
+        token=MagicMock(
+            return_value=MagicMock(
+                local_mode=MagicMock(
+                    return_value=MagicMock(
+                        base_url=MagicMock(),
+                        base_file_url=MagicMock(),
+                        read_timeout=MagicMock(),
+                        build=MagicMock(return_value=mock_app),
+                    )
+                )
+            )
+        )
     )
 
     run_bot("test_token", True)
@@ -114,9 +116,7 @@ def test_run_bot_local_mode(test_mock_application_builder):
     token_ptr.assert_called_with("test_token")
 
     local_mode_ptr.assert_called_with(True)
-    local_mode_ptr.return_value.base_url.assert_called_with(
-        "http://0.0.0.0:8081/bot"
-    )
+    local_mode_ptr.return_value.base_url.assert_called_with("http://0.0.0.0:8081/bot")
     local_mode_ptr.return_value.base_file_url.assert_called_with(
         "http://0.0.0.0:8081/file/bot"
     )
@@ -126,9 +126,7 @@ def test_run_bot_local_mode(test_mock_application_builder):
     mock_app.run_polling.assert_called()
 
 
-def test_run_bot_exception_handling(
-    test_mock_application_builder, test_mock_get_str
-):
+def test_run_bot_exception_handling(test_mock_application_builder, test_mock_get_str):
     """Tests the exception handling of the run_bot function.
 
     Args:
@@ -148,16 +146,10 @@ def test_run_bot_exception_handling(
     run_bot("test_token", True)
 
     test_mock_get_str.assert_any_call("Bot is starting...")
-    test_mock_get_str.assert_any_call(
-        "Make sure the local server is running."
-    )
+    test_mock_get_str.assert_any_call("Make sure the local server is running.")
 
 
-def test_main_with_env_vars(
-    test_mock_logger,
-    test_mock_database,
-    test_mock_get_str
-):
+def test_main_with_env_vars(test_mock_logger, test_mock_database, test_mock_get_str):
     """Tests the main function with environment variables set.
 
     Args:
@@ -170,9 +162,7 @@ def test_main_with_env_vars(
     os.environ["TELEGRAM_TOKEN"] = "env_token"
     os.environ["LOCAL_SERVER_MODE"] = "true"
 
-    with patch(
-        "telegram_file_statistics_bot.__main__.parse_args"
-    ) as mock_parse_args:
+    with patch("telegram_file_statistics_bot.__main__.parse_args") as mock_parse_args:
         mock_parse_args.return_value = MagicMock(
             database=None, debug=None, token=None, local=None
         )
@@ -183,23 +173,16 @@ def test_main_with_env_vars(
     test_mock_get_str.assert_any_call("Current configuration:")
 
 
-def test_main_with_args(
-    test_mock_logger, test_mock_database
-):
+def test_main_with_args(test_mock_logger, test_mock_database):
     """Tests the main function with command-line arguments.
 
     Args:
         test_mock_logger (MagicMock): The mocked logger.
         test_mock_database (MagicMock): The mocked Database.
     """
-    with patch(
-        "telegram_file_statistics_bot.__main__.parse_args"
-    ) as mock_parse_args:
+    with patch("telegram_file_statistics_bot.__main__.parse_args") as mock_parse_args:
         mock_parse_args.return_value = MagicMock(
-            database="arg_database.db",
-            debug=True,
-            token="arg_token",
-            local=True
+            database="arg_database.db", debug=True, token="arg_token", local=True
         )
         main()
 
@@ -224,26 +207,19 @@ def test_main_with_mixed_env_and_args(
     os.environ["TELEGRAM_TOKEN"] = "env_token"
     os.environ["LOCAL_SERVER_MODE"] = "false"
 
-    with patch(
-        "telegram_file_statistics_bot.__main__.parse_args"
-    ) as mock_parse_args:
+    with patch("telegram_file_statistics_bot.__main__.parse_args") as mock_parse_args:
         mock_parse_args.return_value = MagicMock(
-            database="arg_database.db",
-            debug=True,
-            token="arg_token",
-            local=True
+            database="arg_database.db", debug=True, token="arg_token", local=True
         )
         main()
 
     test_mock_database.assert_called_with("arg_database.db")
     test_mock_logger.setLevel.assert_called_with(logging.DEBUG)
     test_mock_get_str.assert_any_call(
-        "Environment variable DATABASE_FILE "
-        "is overridden by the command-line argument."
+        "Environment variable DATABASE_FILE is overridden by the command-line argument."
     )
     test_mock_get_str.assert_any_call(
-        "Environment variable DEBUG_MODE "
-        "is overridden by the command-line argument."
+        "Environment variable DEBUG_MODE is overridden by the command-line argument."
     )
     test_mock_get_str.assert_any_call(
         "Environment variable TELEGRAM_TOKEN "

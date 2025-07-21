@@ -1,0 +1,57 @@
+[MASTER]
+ignore=tests
+init-hook='import sys; sys.path.append("src")'
+jobs=1
+load-plugins=
+extension-pkg-whitelist=
+
+[MESSAGES CONTROL]
+disable=
+    C0301,  # Line too long
+    C0114,  # Missing module docstring
+    C0115,  # Missing class docstring
+    C0116,  # Missing function or method docstring
+    R0903,  # Too few public methods (per classi semplici)
+    R0913,  # Too many arguments (se vuoi flessibilità)
+    R0914,  # Too many local variables
+    R0915,  # Too many statements
+
+[REPORTS]
+output-format=colorized
+reports=no
+score=yes
+
+[BASIC]
+good-names=i,j,k,_,ex,Run,df
+bad-names=foo,bar,baz
+max-line-length=120
+
+[FORMAT]
+indent-string='    '
+expected-line-ending-format=LF
+
+[TYPECHECK]
+ignored-modules=numpy,pandas
+ignore-mixin-members=yes
+
+[LOGGING]
+logging-modules=logging
+
+[DESIGN]
+max-args=6
+max-locals=15
+max-returns=6
+max-branches=12
+max-statements=50
+
+[IMPORTS]
+known-standard-library=sys,os
+import-graph=
+ext-import-graph=
+int-import-graph=
+
+[SIMILARITIES]
+min-similarity-lines=4
+ignore-comments=yes
+ignore-docstrings=yes
+ignore-imports=yes

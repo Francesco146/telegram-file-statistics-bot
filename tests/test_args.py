@@ -12,58 +12,30 @@ from telegram_file_statistics_bot.args import parse_args
 test_arguments = [
     (
         [],
-        Namespace(
-            token=None,
-            database="file_statistics.db",
-            debug=False,
-            local=False
-        )
+        Namespace(token=None, database="file_statistics.db", debug=False, local=False),
     ),
     (
         ["--token", "12345"],
         Namespace(
-            token="12345",
-            database="file_statistics.db",
-            debug=False,
-            local=False
-        )
+            token="12345", database="file_statistics.db", debug=False, local=False
+        ),
     ),
     (
         ["--database", "custom.db"],
-        Namespace(
-            token=None,
-            database="custom.db",
-            debug=False,
-            local=False
-        )
+        Namespace(token=None, database="custom.db", debug=False, local=False),
     ),
     (
         ["--debug"],
-        Namespace(
-            token=None,
-            database="file_statistics.db",
-            debug=True,
-            local=False
-        )
+        Namespace(token=None, database="file_statistics.db", debug=True, local=False),
     ),
     (["--version"], None),
     (
         ["--local"],
-        Namespace(
-            token=None,
-            database="file_statistics.db",
-            debug=False,
-            local=True
-        )
+        Namespace(token=None, database="file_statistics.db", debug=False, local=True),
     ),
     (
         ["--token", "12345", "--database", "custom.db", "--debug"],
-        Namespace(
-            token="12345",
-            database="custom.db",
-            debug=True,
-            local=False
-        )
+        Namespace(token="12345", database="custom.db", debug=True, local=False),
     ),
 ]
 
@@ -73,7 +45,7 @@ def test_parse_args(args, expected, monkeypatch):
     """
     Test parse_args with various argument combinations.
     """
-    monkeypatch.setattr(sys, 'argv', ['prog'] + args)
+    monkeypatch.setattr(sys, "argv", ["prog"] + args)
 
     # check if the program exits when --version is passed
     if "--version" in args:

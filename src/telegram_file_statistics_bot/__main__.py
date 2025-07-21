@@ -22,6 +22,8 @@ from .handlers import (
     callback_query_handler,
     handle_file,
     help_command,
+    ignore_extensions_command,
+    remove_extensions_command,
     reset,
     start_command,
     stats,
@@ -71,14 +73,10 @@ def run_bot(token: str, local: bool) -> None:
     application = application.build()
 
     application.add_handler(
-        CommandHandler(
-            "help", lambda update, _: help_command(update)
-        )
+        CommandHandler("help", lambda update, _: help_command(update))
     )
     application.add_handler(
-        CommandHandler(
-            "start", lambda update, _: start_command(update)
-        )
+        CommandHandler("start", lambda update, _: start_command(update))
     )
     application.add_handler(
         MessageHandler(
@@ -86,22 +84,16 @@ def run_bot(token: str, local: bool) -> None:
             lambda update, context: handle_file(update, context, local),
         )
     )
+    application.add_handler(CommandHandler("stats", lambda update, _: stats(update)))
+    application.add_handler(CommandHandler("reset", lambda update, _: reset(update)))
     application.add_handler(
-        CommandHandler(
-            "stats",
-            lambda update, _: stats(update)
-        )
+        CommandHandler("ignore_extensions", ignore_extensions_command)
     )
     application.add_handler(
-        CommandHandler(
-            "reset",
-            lambda update, _: reset(update)
-        )
+        CommandHandler("remove_extensions", remove_extensions_command)
     )
     application.add_handler(
-        CallbackQueryHandler(
-            lambda update, _: callback_query_handler(update)
-        )
+        CallbackQueryHandler(lambda update, _: callback_query_handler(update))
     )
 
     logger.info(get_str("Bot is starting..."))
@@ -126,7 +118,7 @@ def main() -> None:
     if args.database and args.database != database_via_env:
         logger.warning(
             get_str(
-                "Environment variable DATABASE_FILE is overridden by the command-line argument."  # pylint: disable=line-too-long # noqa: E501
+                "Environment variable DATABASE_FILE is overridden by the command-line argument."
             )
         )
 
@@ -139,7 +131,7 @@ def main() -> None:
     if args.debug and args.debug != debug_via_env:
         logger.warning(
             get_str(
-                "Environment variable DEBUG_MODE is overridden by the command-line argument."  # pylint: disable=line-too-long # noqa: E501
+                "Environment variable DEBUG_MODE is overridden by the command-line argument."
             )
         )
 
@@ -154,23 +146,22 @@ def main() -> None:
     if args.token and args.token != token_via_env:
         logger.warning(
             get_str(
-                "Environment variable TELEGRAM_TOKEN is overridden by the command-line argument."  # pylint: disable=line-too-long # noqa: E501
+                "Environment variable TELEGRAM_TOKEN is overridden by the command-line argument."
             )
         )
 
-    local_via_env = os.getenv(
-        "LOCAL_SERVER_MODE", str(args.local)).lower() == "true"
+    local_via_env = os.getenv("LOCAL_SERVER_MODE", str(args.local)).lower() == "true"
     local = args.local or local_via_env
 
     if args.local and args.local != local_via_env:
         logger.warning(
             get_str(
-                "Environment variable LOCAL_SERVER_MODE is overridden by the command-line argument."  # pylint: disable=line-too-long # noqa: E501
+                "Environment variable LOCAL_SERVER_MODE is overridden by the command-line argument."
             )
         )
 
     logger.debug(get_str("Current configuration:"))
-    logger.debug(get_str("  * language: %s"), os.getenv('BOT_LANGUAGE', 'en'))
+    logger.debug(get_str("  * language: %s"), os.getenv("BOT_LANGUAGE", "en"))
     logger.debug(get_str("  * database: %s"), database_file_path)
     logger.debug(get_str("  * debug: %s"), should_debug)
     logger.debug(get_str("  * local: %s"), local)

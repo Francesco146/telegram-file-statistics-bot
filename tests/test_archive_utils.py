@@ -18,26 +18,22 @@ from telegram_file_statistics_bot.archive_utils import (
 
 @pytest.fixture(scope="function", name="test_mock_user_stats")
 def mock_user_stats():
-    """Initializes a mock user statistics dictionary for testing.
-    """
+    """Initializes a mock user statistics dictionary for testing."""
     return {
         "total_size": 0,
         "file_count": 0,
         "streamable": 0,
-        "extension_categories": {}
+        "extension_categories": {},
     }
 
 
 def test_get_archive_absolute_path():
-    """Tests the conversion of a URL file path to an absolute path.
-    """
+    """Tests the conversion of a URL file path to an absolute path."""
     relative_path = (
         "http://0.0.0.0:8081/file/bot<token>//var/lib/telegram-bot-api/"
         "<token>/documents/file.zip"
     )
-    expected_absolute_path = (
-        "api/telegram-bot-api-data/<token>/documents/file.zip"
-    )
+    expected_absolute_path = "api/telegram-bot-api-data/<token>/documents/file.zip"
     assert get_archive_absolute_path(relative_path) == expected_absolute_path
 
 
@@ -80,7 +76,6 @@ def test_update_user_statistics(test_mock_user_stats):
 
 
 def test_is_archive():
-    """Tests the detection of archive files.
-    """
+    """Tests the detection of archive files."""
     assert is_archive("archive.zip") is True
     assert is_archive("document.txt") is False

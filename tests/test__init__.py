@@ -32,7 +32,7 @@ def test_format_debug(test_formatter: CustomFormatter):
         lineno=10,
         msg="Debug message",
         args=(),
-        exc_info=None
+        exc_info=None,
     )
     formatted_message = test_formatter.format(record)
     assert "\x1b[38;20m" in formatted_message
@@ -52,7 +52,7 @@ def test_format_info(test_formatter: CustomFormatter):
         lineno=20,
         msg="Info message",
         args=(),
-        exc_info=None
+        exc_info=None,
     )
     formatted_message = test_formatter.format(record)
     assert "\x1b[38;20m" in formatted_message
@@ -69,11 +69,10 @@ def test_format_warning(test_formatter: CustomFormatter):
         name="test",
         level=logging.WARNING,
         pathname=__file__,
-
         lineno=30,
         msg="Warning message",
         args=(),
-        exc_info=None
+        exc_info=None,
     )
     formatted_message = test_formatter.format(record)
     assert "\x1b[33;20m" in formatted_message
@@ -93,7 +92,7 @@ def test_format_error(test_formatter: CustomFormatter):
         lineno=40,
         msg="Error message",
         args=(),
-        exc_info=None
+        exc_info=None,
     )
     formatted_message = test_formatter.format(record)
     assert "\x1b[31;1m" in formatted_message
@@ -113,7 +112,7 @@ def test_format_critical(test_formatter: CustomFormatter):
         lineno=50,
         msg="Critical message",
         args=(),
-        exc_info=None
+        exc_info=None,
     )
     formatted_message = test_formatter.format(record)
     assert "\x1b[31;1m" in formatted_message

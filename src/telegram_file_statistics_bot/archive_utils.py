@@ -61,7 +61,7 @@ async def handle_archive(
 
     try:
         user_id = update.effective_user.id
-        user_stats = Database().get_user_data(user_id)
+        user_stats = Database()[user_id]
 
         file = await context.bot.get_file(file_id)
 
@@ -73,15 +73,11 @@ async def handle_archive(
         with tempfile.TemporaryDirectory() as temp_dir:
             extract_archive(archive_absolute_path, temp_dir)
 
-            await process_extracted_files(
-                temp_dir, user_id, user_stats, update
-            )
+            await process_extracted_files(temp_dir, user_id, user_stats, update)
 
-            user_stats["total_download_size"] += os.path.getsize(
-                archive_absolute_path
-            )
+            user_stats["total_download_size"] += os.path.getsize(archive_absolute_path)
 
-            Database().update_user_data(user_id, user_stats)
+            Database()[user_id] = user_stats
     except (zipfile.BadZipFile, OSError, ValueError) as error:
         logger.error(get_str("Error handling zip file: %s"), error)
         raise error
@@ -115,10 +111,7 @@ def extract_archive(archive_path: str, temp_dir: str) -> None:
 
 
 async def process_extracted_files(
-    temp_dir: str,
-    user_id: int,
-    user_stats: Dict,
-    update: Update
+    temp_dir: str, user_id: int, user_stats: Dict, update: Update
 ) -> None:
     """Process the extracted files from the archive.
 
@@ -133,27 +126,34 @@ async def process_extracted_files(
     if update.message is None:
         return
 
+    ignored = user_stats.get("ignored_extensions", [])
     for root, _, files in os.walk(temp_dir):
         for file in files:
+            extension = os.path.splitext(file)[1].lower()
+            if extension in ignored:
+                logger.info(
+                    "File '%s' inside archive ignored due to its extension (%s).",
+                    file,
+                    extension,
+                )
+                continue
             file_path = os.path.join(root, file)
             file_size = os.path.getsize(file_path)
             logger.debug(
-                f"{get_str("Processing file")}: '%s' (%s)",
+                f"{get_str('Processing file')}: '%s' (%s)",
                 file,
                 humanize.naturalsize(file_size),
             )
 
             update_user_statistics(user_stats, file, file_size)
-            Database().update_user_data(user_id, user_stats)
+            Database()[user_id] = user_stats
             await update.message.reply_text(
                 f"{get_str('File received via archive')}: '{file}' "
                 f"({humanize.naturalsize(file_size)})."
             )
 
 
-def update_user_statistics(
-    user_stats: Dict, file: str, file_size: int
-) -> None:
+def update_user_statistics(user_stats: Dict, file: str, file_size: int) -> None:
     """Update the user statistics based on the processed file.
 
     Args:

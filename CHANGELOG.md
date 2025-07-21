@@ -1,3 +1,21 @@
+# [1.3.0-dev.1](https://github.com/Francesco146/telegram-file-statistics-bot/compare/v1.2.0...v1.3.0-dev.1) (2025-07-21)
+
+
+### Bug Fixes
+
+* ensure integer values for count and size in remove_extensions logic ([1e1bc13](https://github.com/Francesco146/telegram-file-statistics-bot/commit/1e1bc1345a8e6d4ec53e49fb98805f30c73d98e8))
+
+
+### Features
+
+* add .flake8 configuration to ignore line length errors ([38d509f](https://github.com/Francesco146/telegram-file-statistics-bot/commit/38d509f46e676ccb95fe123926b017b1ebcc49ba))
+* add .pylintrc configuration file for code quality checks ([d25b84f](https://github.com/Francesco146/telegram-file-statistics-bot/commit/d25b84fb81b36767055b0aaa22c2650438df9276))
+* add @semantic-release/exec dependency for enhanced release capabilities ([75ff00c](https://github.com/Francesco146/telegram-file-statistics-bot/commit/75ff00c45afb8481f85c491e166d2eafd4862d0a))
+* add ignore_extensions command to manage ignored file types ([c422302](https://github.com/Francesco146/telegram-file-statistics-bot/commit/c422302872617eef096e2602e5c0fc0293db6cfc))
+* enhance Database class with additional magic methods for better usability ([2b34c1b](https://github.com/Francesco146/telegram-file-statistics-bot/commit/2b34c1bd76bd206e76fd0850df957847acd70c13))
+* implement remove_extensions command to allow users to manage their extension statistics ([619c551](https://github.com/Francesco146/telegram-file-statistics-bot/commit/619c5512c9fc5a2715c6998220d4a8e85fb26567))
+* update release configuration to include additional assets for semantic release ([1d96283](https://github.com/Francesco146/telegram-file-statistics-bot/commit/1d9628398a15a5e79f051dccd40f6c6e2e8c84a1))
+
 # [1.2.0](https://github.com/Francesco146/telegram-file-statistics-bot/compare/v1.1.1...v1.2.0) (2025-01-27)
 
 

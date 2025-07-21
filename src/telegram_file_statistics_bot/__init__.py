@@ -27,8 +27,7 @@ class CustomFormatter(logging.Formatter):
     bold_red = "\x1b[31;1m"
     reset = "\x1b[0m"
     log_format = (
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s "
-        "(%(filename)s:%(lineno)d)"
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s (%(filename)s:%(lineno)d)"
     )
 
     FORMATS = {
@@ -43,6 +42,12 @@ class CustomFormatter(logging.Formatter):
         log_fmt = self.FORMATS.get(record.levelno)
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)
+
+    def __str__(self):
+        return f"<CustomFormatter log_format='{self.log_format}'>"
+
+    def __repr__(self):
+        return f"CustomFormatter(log_format={self.log_format!r})"
 
 
 logger = logging.getLogger(__name__)
