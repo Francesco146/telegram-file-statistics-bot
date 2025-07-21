@@ -85,6 +85,29 @@ async def ignore_extensions_command(
     await add_ignored()
 
 
+async def toggle_detailed_sizes_command(update: Update) -> None:
+    """
+    Allows the user to toggle between human-readable and detailed (raw byte) file size display.
+    Usage:
+        /toggle_detailed_sizes
+    """
+    if update.effective_user is None:
+        return
+    user_id = update.effective_user.id
+    send = get_send_function(update)
+    db = Database()
+    user_stats = db[user_id]
+    current = user_stats.get("detailed_sizes", False)
+    user_stats["detailed_sizes"] = not current
+    db[user_id] = user_stats
+    if user_stats["detailed_sizes"]:
+        await send("Detailed file sizes (raw bytes) are now ENABLED.")
+    else:
+        await send(
+            "Detailed file sizes (raw bytes) are now DISABLED. Human-readable sizes will be shown."
+        )
+
+
 async def handle_file(
     update: Update, context: ContextTypes.DEFAULT_TYPE, local_mode: bool
 ) -> None:
@@ -168,10 +191,16 @@ async def handle_file(
             )
             return
 
+        # Choose size display based on user setting
+        show_bytes = user_stats.get("detailed_sizes", False)
+        size_display = (
+            str(file_size) + " bytes" if show_bytes else humanize.naturalsize(file_size)
+        )
+
         logger.debug(
             f"{get_str('Processing file')}: '%s' (%s)",
             file_name,
-            humanize.naturalsize(file_size),
+            size_display,
         )
 
         user_stats["total_size"] += file_size
@@ -192,8 +221,7 @@ async def handle_file(
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
-            f"{get_str('File received')}: '{file_name}' "
-            f"({humanize.naturalsize(file_size)})",
+            f"{get_str('File received')}: '{file_name}' ({size_display})",
             reply_markup=reply_markup,
         )
     except (OSError, ValueError) as error:
@@ -206,14 +234,17 @@ async def stats(update: Update) -> None:
     Fetches and sends user statistics as a formatted HTML message.
     """
 
-    def format_extension_stats(ext_cats):
+    def format_extension_stats(ext_cats, show_bytes):
         parts = []
         for ext, info in ext_cats.items():
             if isinstance(info, dict):
                 count = info.get("count", 0)
                 size = info.get("size", 0)
+                size_display = (
+                    str(size) + " bytes" if show_bytes else humanize.naturalsize(size)
+                )
                 parts.append(
-                    f"<code>{ext}: {nget_str('%d file', '%d files', count) % count} ({humanize.naturalsize(size)})</code>"
+                    f"<code>{ext}: {nget_str('%d file', '%d files', count) % count} ({size_display})</code>"
                 )
             else:
                 parts.append(
@@ -230,6 +261,7 @@ async def stats(update: Update) -> None:
     file_count = user_stats["file_count"]
     streamable_count = user_stats["streamable"]
     ext_cats = user_stats["extension_categories"]
+    show_bytes = user_stats.get("detailed_sizes", False)
 
     keyboard = [
         [InlineKeyboardButton(HOME_LABEL, callback_data="start")],
@@ -244,9 +276,19 @@ async def stats(update: Update) -> None:
     send = get_send_function(update)
 
     try:
+        total_size_display = (
+            str(user_stats["total_size"]) + " bytes"
+            if show_bytes
+            else humanize.naturalsize(user_stats["total_size"])
+        )
+        total_download_display = (
+            str(user_stats["total_download_size"]) + " bytes"
+            if show_bytes
+            else humanize.naturalsize(user_stats["total_download_size"])
+        )
         msg_parts = [
-            f"{get_str('Total file size: ')}<code>{humanize.naturalsize(user_stats['total_size'])}</code>",
-            f"{get_str('Total download size: ')}<code>{humanize.naturalsize(user_stats['total_download_size'])}</code>",
+            f"{get_str('Total file size: ')}<code>{total_size_display}</code>",
+            f"{get_str('Total download size: ')}<code>{total_download_display}</code>",
             f"{get_str('Number of files uploaded: ')}<code>{nget_str('%d file', '%d files', file_count) % file_count}</code>",
             f"{get_str('Streamable files: ')}<code>{nget_str('%d video', '%d videos', streamable_count) % streamable_count}</code>",
             f"{get_str('File extensions:')}",
@@ -254,7 +296,7 @@ async def stats(update: Update) -> None:
         if not ext_cats:
             msg_parts.append(f"<code>{get_str('No files uploaded yet.')}</code>")
         else:
-            msg_parts.extend(format_extension_stats(ext_cats))
+            msg_parts.extend(format_extension_stats(ext_cats, show_bytes))
         msg = "\n".join(msg_parts)
         await send(msg, parse_mode="HTML", reply_markup=reply_markup)
     except (OSError, ValueError) as error:

@@ -2,9 +2,11 @@
 This module contains tests for the archive_utils module.
 """
 
+import asyncio
 import os
 import tempfile
 import zipfile
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -12,6 +14,7 @@ from telegram_file_statistics_bot.archive_utils import (
     extract_archive,
     get_archive_absolute_path,
     is_archive,
+    process_extracted_files,
     update_user_statistics,
 )
 
@@ -79,3 +82,47 @@ def test_is_archive():
     """Tests the detection of archive files."""
     assert is_archive("archive.zip") is True
     assert is_archive("document.txt") is False
+
+
+def test_process_extracted_files_detailed_sizes(tmp_path):
+    # Create a fake extracted file
+    test_file = tmp_path / "file1.txt"
+    test_file.write_bytes(b"a" * 1234)
+
+    # Mock update and user_stats
+    mock_update = MagicMock()
+    mock_update.message = MagicMock()
+    mock_update.message.reply_text = AsyncMock()
+    user_stats = {
+        "ignored_extensions": [],
+        "extension_categories": {},
+        "detailed_sizes": True,
+        "total_size": 0,
+        "file_count": 0,
+        "streamable": 0,
+    }
+    user_id = 42
+
+    # Patch Database to avoid real DB writes
+    with patch("telegram_file_statistics_bot.archive_utils.Database") as mock_db:
+        mock_db().__getitem__.return_value = user_stats
+        mock_db().__setitem__ = MagicMock()
+        # Run with detailed_sizes True
+        asyncio.run(
+            process_extracted_files(str(tmp_path), user_id, user_stats, mock_update)
+        )
+        # Check for raw bytes in reply
+        assert any(
+            "1234 bytes" in str(call.args)
+            for call in mock_update.message.reply_text.call_args_list
+        )
+        mock_update.message.reply_text.reset_mock()
+        # Now test with detailed_sizes False
+        user_stats["detailed_sizes"] = False
+        asyncio.run(
+            process_extracted_files(str(tmp_path), user_id, user_stats, mock_update)
+        )
+        assert any(
+            "1.2 kB" in str(call.args) or "1.2 KB" in str(call.args)
+            for call in mock_update.message.reply_text.call_args_list
+        )

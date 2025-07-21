@@ -127,6 +127,7 @@ async def process_extracted_files(
         return
 
     ignored = user_stats.get("ignored_extensions", [])
+    show_bytes = user_stats.get("detailed_sizes", False)
     for root, _, files in os.walk(temp_dir):
         for file in files:
             extension = os.path.splitext(file)[1].lower()
@@ -139,17 +140,21 @@ async def process_extracted_files(
                 continue
             file_path = os.path.join(root, file)
             file_size = os.path.getsize(file_path)
+            size_display = (
+                str(file_size) + " bytes"
+                if show_bytes
+                else humanize.naturalsize(file_size)
+            )
             logger.debug(
                 f"{get_str('Processing file')}: '%s' (%s)",
                 file,
-                humanize.naturalsize(file_size),
+                size_display,
             )
 
             update_user_statistics(user_stats, file, file_size)
             Database()[user_id] = user_stats
             await update.message.reply_text(
-                f"{get_str('File received via archive')}: '{file}' "
-                f"({humanize.naturalsize(file_size)})."
+                f"{get_str('File received via archive')}: '{file}' ({size_display})."
             )
 
 

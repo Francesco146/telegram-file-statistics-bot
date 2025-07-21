@@ -149,3 +149,54 @@ async def test_handle_file_error(
     test_mock_get_str.return_value = "Error handling file."
     await handle_file(test_mock_update, test_mock_context, local_mode=False)
     test_mock_context.bot.is_archive.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_handle_file_detailed_sizes_toggle(
+    test_mock_update,
+    test_mock_context,
+    test_mock_is_archive,
+    test_mock_database,
+    test_mock_get_str,
+):
+    """Tests handle_file with detailed_sizes toggle for raw bytes and human-readable output."""
+    test_mock_is_archive.return_value = False
+
+    def mock_get_str_func(text):
+        return text
+
+    test_mock_get_str.side_effect = mock_get_str_func
+    test_mock_update.message.document.file_name = "test.txt"
+    test_mock_update.message.document.file_size = 2048
+
+    user_stats = {
+        "ignored_extensions": [],
+        "extension_categories": {},
+        "detailed_sizes": True,
+        "total_size": 0,
+        "total_download_size": 0,
+        "file_count": 0,
+        "streamable": 0,
+    }
+
+    # Test with detailed_sizes = True (raw bytes)
+    db_instance = test_mock_database.return_value
+    db_instance.__getitem__.return_value = user_stats
+    db_instance.__setitem__ = MagicMock()
+
+    await handle_file(test_mock_update, test_mock_context, local_mode=False)
+
+    assert any(
+        "2048 bytes" in str(call.args)
+        for call in test_mock_update.message.reply_text.call_args_list
+    )
+
+    test_mock_update.message.reply_text.reset_mock()
+    # Test with detailed_sizes = False (human-readable)
+    user_stats["detailed_sizes"] = False
+    await handle_file(test_mock_update, test_mock_context, local_mode=False)
+    # Should show human-readable size in the reply
+    assert any(
+        "2.0 kB" in str(call.args) or "2.0 KB" in str(call.args)
+        for call in test_mock_update.message.reply_text.call_args_list
+    )

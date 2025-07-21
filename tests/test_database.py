@@ -83,6 +83,7 @@ def test_get_user_data(test_db):
         "streamable": 0,
         "extension_categories": {},
         "ignored_extensions": [],
+        "detailed_sizes": False,
     }
     assert user_data == expected_data
 
@@ -103,6 +104,7 @@ def test_reset_user_data(test_db):
         "streamable": 0,
         "extension_categories": {},
         "ignored_extensions": [],
+        "detailed_sizes": False,
     }
     assert user_data == expected_data
 
@@ -121,6 +123,7 @@ def test_update_user_data(test_db):
         "streamable": 5,
         "extension_categories": {"pdf": 5, "docx": 5},
         "ignored_extensions": [],
+        "detailed_sizes": False,
     }
     test_db[user_id] = new_data
     user_data = test_db[user_id]
