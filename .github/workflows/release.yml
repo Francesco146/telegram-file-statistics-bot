@@ -1,42 +1,67 @@
 name: Release
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - master
-      - dev
+    workflow_dispatch:
+    push:
+        branches:
+            - master
+            - dev
 
 jobs:
-  release:
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
+    release:
+        runs-on: ubuntu-latest
+        permissions:
+            id-token: write
+            contents: write
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-        with:
-          enable-cache: true
-          cache-dependency-glob: "**/pyproject.toml"
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "lts/*"
 
-      - name: Install the project 
-        run: uv sync
-      - name: Build the project
-        run: uv build --wheel
+            - name: Install dependencies
+              run: npm install
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "lts/*"
+            - name: Install uv
+              uses: astral-sh/setup-uv@v6
+              with:
+                  enable-cache: true
+                  cache-dependency-glob: "**/pyproject.toml"
 
-      - name: Install dependencies
-        run: npm install
+            - name: Determine the next release version
+              uses: cycjimmy/semantic-release-action@v4
+              with:
+                  dry_run: true
+                  extra_plugins: |
+                      @semantic-release/git
+                      @semantic-release/exec
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm exec semantic-release
+            - name: Check if new version exists
+              if: env.NEXT_RELEASE_VERSION == ''
+              run: echo "No new release version determined by semantic-release. Skipping release steps."
+
+            - name: Set version
+              if: env.NEXT_RELEASE_VERSION != ''
+              run: uv version ${{env.NEXT_RELEASE_VERSION}}
+
+            - name: Install the project
+              if: env.NEXT_RELEASE_VERSION != ''
+              run: uv sync
+
+            - name: Build the project
+              if: env.NEXT_RELEASE_VERSION != ''
+              run: uv build
+
+            - name: Release
+              if: env.NEXT_RELEASE_VERSION != ''
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: npm exec semantic-release
