@@ -1,3 +1,10 @@
+# [1.4.0-dev.2](https://github.com/Francesco146/telegram-file-statistics-bot/compare/v1.4.0-dev.1...v1.4.0-dev.2) (2025-07-21)
+
+
+### Bug Fixes
+
+* correct ignore directive in pylint configuration ([36ab4c7](https://github.com/Francesco146/telegram-file-statistics-bot/commit/36ab4c72495b2bdc6f6688295d5550f7342af6da))
+
 # [1.4.0-dev.1](https://github.com/Francesco146/telegram-file-statistics-bot/compare/v1.3.0...v1.4.0-dev.1) (2025-07-21)
 
 
