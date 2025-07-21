@@ -63,7 +63,7 @@ class Database:
     def init_db(self) -> None:
         """
         Initializes the database by creating the `user_data` table
-        if it does not already exist. Adds ignored_extensions if missing.
+        if it does not already exist. Adds ignored_extensions and detailed_sizes if missing.
         """
         with self._connect() as conn:
             cursor = conn.cursor()
@@ -75,15 +75,20 @@ class Database:
                     file_count INTEGER DEFAULT 0,
                     streamable INTEGER DEFAULT 0,
                     extension_categories TEXT DEFAULT '{}',
-                    ignored_extensions TEXT DEFAULT '[]'
+                    ignored_extensions TEXT DEFAULT '[]',
+                    detailed_sizes INTEGER DEFAULT 0
                 )"""
             )
-            # Add ignored_extensions column if it doesn't exist (for upgrades)
+            # Add columns if they don't exist (for upgrades)
             cursor.execute("PRAGMA table_info(user_data)")
             columns = [row[1] for row in cursor.fetchall()]
             if "ignored_extensions" not in columns:
                 cursor.execute(
                     "ALTER TABLE user_data ADD COLUMN ignored_extensions TEXT DEFAULT '[]'"
+                )
+            if "detailed_sizes" not in columns:
+                cursor.execute(
+                    "ALTER TABLE user_data ADD COLUMN detailed_sizes INTEGER DEFAULT 0"
                 )
             conn.commit()
 
@@ -111,8 +116,9 @@ class Database:
                 "streamable": 0,
                 "extension_categories": json.loads("{}"),
                 "ignored_extensions": [],
+                "detailed_sizes": False,
             }
-        # row: user_id, total_size, total_download_size, file_count, streamable, extension_categories, ignored_extensions
+        # row: user_id, total_size, total_download_size, file_count, streamable, extension_categories, ignored_extensions, detailed_sizes
         return {
             "total_size": row[1],
             "total_download_size": row[2],
@@ -120,6 +126,7 @@ class Database:
             "streamable": row[4],
             "extension_categories": json.loads(row[5]),
             "ignored_extensions": json.loads(row[6]) if len(row) > 6 and row[6] else [],
+            "detailed_sizes": bool(row[7]) if len(row) > 7 else False,
         }
 
     def reset_user_data(self, user_id: int) -> None:
@@ -134,8 +141,8 @@ class Database:
             cursor.execute(
                 """INSERT OR REPLACE INTO user_data
                    (user_id, total_size, total_download_size,
-                   file_count, streamable, extension_categories, ignored_extensions)
-                   VALUES (?, ?, ?, ?, ?, ?, ?)""",
+                   file_count, streamable, extension_categories, ignored_extensions, detailed_sizes)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     user_id,
                     0,
@@ -144,6 +151,7 @@ class Database:
                     0,
                     json.dumps({}),
                     json.dumps([]),
+                    0,
                 ),
             )
             conn.commit()
@@ -191,8 +199,8 @@ class Database:
             cursor.execute(
                 """INSERT OR REPLACE INTO user_data
                    (user_id, total_size, total_download_size,
-                   file_count, streamable, extension_categories, ignored_extensions)
-                   VALUES (?, ?, ?, ?, ?, ?, ?)""",
+                   file_count, streamable, extension_categories, ignored_extensions, detailed_sizes)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     user_id,
                     data["total_size"],
@@ -201,6 +209,7 @@ class Database:
                     data["streamable"],
                     json.dumps(data["extension_categories"]),
                     json.dumps(data.get("ignored_extensions", [])),
+                    int(data.get("detailed_sizes", False)),
                 ),
             )
             conn.commit()

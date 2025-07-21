@@ -27,6 +27,7 @@ from .handlers import (
     reset,
     start_command,
     stats,
+    toggle_detailed_sizes_command,
 )
 
 
@@ -91,6 +92,9 @@ def run_bot(token: str, local: bool) -> None:
     )
     application.add_handler(
         CommandHandler("remove_extensions", remove_extensions_command)
+    )
+    application.add_handler(
+        CommandHandler("toggle_detailed_sizes", toggle_detailed_sizes_command)
     )
     application.add_handler(
         CallbackQueryHandler(lambda update, _: callback_query_handler(update))
