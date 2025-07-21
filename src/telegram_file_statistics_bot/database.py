@@ -12,6 +12,38 @@ from . import get_str
 
 
 class Database:
+    def remove_extensions_from_user(self, user_id: int, extensions: list[str]) -> None:
+        """
+        Remove specified extensions from a user's extension_categories and update stats accordingly.
+
+        Args:
+            user_id (int): The ID of the user.
+            extensions (list[str]): List of extensions to remove (e.g., ['.exe', '.mp3']).
+        """
+        user_data = self.get_user_data(user_id)
+        ext_cats = user_data.get("extension_categories", {})
+        removed = False
+        for ext in extensions:
+            if ext in ext_cats:
+                ext_info = ext_cats.pop(ext)
+                count = ext_info.get("count", 0)
+                size = ext_info.get("size", 0)
+                user_data["file_count"] = max(
+                    0,
+                    user_data["file_count"] - (count if isinstance(count, int) else 0),
+                )
+                user_data["total_size"] = max(
+                    0, user_data["total_size"] - (size if isinstance(size, int) else 0)
+                )
+                user_data["total_download_size"] = max(
+                    0,
+                    user_data["total_download_size"]
+                    - (size if isinstance(size, int) else 0),
+                )
+                removed = True
+        if removed:
+            self.update_user_data(user_id, user_data)
+
     """
     A singleton class to interact with the SQLite database for the
     Telegram Bot for File Statistics.

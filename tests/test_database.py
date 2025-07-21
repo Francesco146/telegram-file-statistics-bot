@@ -144,3 +144,29 @@ def test_is_stats_empty(test_db):
     }
     test_db.update_user_data(user_id, new_data)
     assert not test_db.is_stats_empty(user_id)
+
+
+def test_remove_extensions_from_user_updates_count_and_size(test_db):
+    """Test that removing an extension updates both file count and total size correctly."""
+    user_id = 42
+    new_data = {
+        "total_size": 300,
+        "total_download_size": 300,
+        "file_count": 6,
+        "streamable": 0,
+        "extension_categories": {
+            ".zip": {"count": 2, "size": 100},
+            ".mp3": {"count": 4, "size": 200},
+        },
+        "ignored_extensions": [],
+    }
+    test_db.update_user_data(user_id, new_data)
+    # Remove .mp3 extension
+    test_db.remove_extensions_from_user(user_id, [".mp3"])
+    user_data = test_db.get_user_data(user_id)
+    assert user_data["file_count"] == 2  # Only .zip files remain
+    assert user_data["total_size"] == 100  # Only .zip size remains
+    assert user_data["total_download_size"] == 100  # Only .zip download size remains
+    assert ".mp3" not in user_data["extension_categories"]
+    assert user_data["extension_categories"][".zip"]["count"] == 2
+    assert user_data["extension_categories"][".zip"]["size"] == 100

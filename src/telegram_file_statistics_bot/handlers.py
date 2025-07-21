@@ -172,10 +172,11 @@ async def handle_file(
         mime_type, _ = mimetypes.guess_type(file_name)
         if mime_type and mime_type.startswith("video"):
             user_stats["streamable"] += 1
-
-        user_stats["extension_categories"].setdefault(extension, 0)
-        user_stats["extension_categories"][extension] += 1
-
+        ext_cats = user_stats["extension_categories"]
+        if extension not in ext_cats or not isinstance(ext_cats[extension], dict):
+            ext_cats[extension] = {"count": 0, "size": 0}
+        ext_cats[extension]["count"] += 1
+        ext_cats[extension]["size"] += file_size
         Database().update_user_data(user_id, user_stats)
         keyboard = [
             [InlineKeyboardButton(STATS_LABEL, callback_data="stats")],
@@ -252,10 +253,18 @@ async def stats(update: Update) -> None:
         if not user_stats["extension_categories"]:
             msg_parts.append(f"<code>{get_str('No files uploaded yet.')}</code>")
         else:
-            for ext, count in user_stats["extension_categories"].items():
-                msg_parts.append(
-                    f"<code>{ext}: {nget_str('%d file', '%d files', count) % count}</code>"
-                )
+            for ext, info in user_stats["extension_categories"].items():
+                if isinstance(info, dict):
+                    count = info.get("count", 0)
+                    size = info.get("size", 0)
+                    msg_parts.append(
+                        f"<code>{ext}: {nget_str('%d file', '%d files', count) % count} ({humanize.naturalsize(size)})</code>"
+                    )
+                else:
+                    # fallback for legacy data
+                    msg_parts.append(
+                        f"<code>{ext}: {nget_str('%d file', '%d files', info) % info}</code>"
+                    )
 
         msg = "\n".join(msg_parts)
 
@@ -263,6 +272,46 @@ async def stats(update: Update) -> None:
     except (OSError, ValueError) as error:
         logger.error(get_str("Error getting stats: %s"), error)
         await send(get_str("Error getting statistics."), reply_markup=reply_markup)
+
+
+# Remove extension statistics command
+async def remove_extensions_command(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    """
+    Allows the user to remove extension statistics from their own data.
+    Usage:
+        /remove_extensions .exe .mp3   # Remove stats for .exe and .mp3
+        /remove_extensions             # List current extension stats
+    """
+    if update.effective_user is None:
+        return
+    user_id = update.effective_user.id
+    send = get_send_function(update)
+    args = context.args if hasattr(context, "args") else []
+    db = Database()
+    user_stats = db.get_user_data(user_id)
+    ext_cats = user_stats.get("extension_categories", {})
+
+    if not args:
+        if ext_cats:
+            msg = "Current extension stats:\n"
+            for ext, info in ext_cats.items():
+                if isinstance(info, dict):
+                    msg += f"{ext}: {info.get('count', 0)} files, {humanize.naturalsize(info.get('size', 0))}\n"
+                else:
+                    msg += f"{ext}: {info} files\n"
+            await send(msg.strip())
+        else:
+            await send("No extension statistics found.")
+        return
+
+    # Remove specified extensions
+    extensions = [
+        ext.lower() if ext.startswith(".") else f".{ext.lower()}" for ext in args
+    ]
+    db.remove_extensions_from_user(user_id, extensions)
+    await send(f"Removed stats for: {', '.join(extensions)}")
 
 
 async def reset(update: Update) -> None:
