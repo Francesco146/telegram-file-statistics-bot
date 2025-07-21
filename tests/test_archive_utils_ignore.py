@@ -18,7 +18,7 @@ async def test_process_extracted_files_ignores_extensions():
             os.path.join(temp_dir, "file3.mp3"),
         ]
         for path in file_paths:
-            with open(path, "w") as f:
+            with open(path, "w", encoding="utf-8") as f:
                 f.write("test")
 
         # Mock update and user_stats
@@ -33,8 +33,8 @@ async def test_process_extracted_files_ignores_extensions():
             "extension_categories": {},
             "ignored_extensions": [".exe", ".mp3"],
         }
-        with patch("telegram_file_statistics_bot.archive_utils.Database") as MockDB:
-            MockDB.return_value.update_user_data = MagicMock()
+        with patch("telegram_file_statistics_bot.archive_utils.Database") as mock_db:
+            mock_db.return_value.update_user_data = MagicMock()
             await process_extracted_files(temp_dir, user_id, user_stats, update)
 
         # Only .txt file should be processed

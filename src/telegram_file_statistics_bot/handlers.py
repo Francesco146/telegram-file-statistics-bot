@@ -31,27 +31,20 @@ async def ignore_extensions_command(
         /ignore_extensions -rm .exe    # Remove from ignore list
         /ignore_extensions             # List ignored extensions
     """
-    if update.effective_user is None:
-        return
-    user_id = update.effective_user.id
-    send = get_send_function(update)
-    args = context.args if hasattr(context, "args") else []
-    db = Database()
-    user_stats = db[user_id]
-    ignored: list[str] = user_stats.get("ignored_extensions", [])
 
-    if not args:
+    def normalize_ext(ext: str) -> str:
+        return ext.lower() if ext.startswith(".") else f".{ext.lower()}"
+
+    async def list_ignored(send, ignored):
         if ignored:
             await send(f"Ignored extensions: {', '.join(ignored)}")
         else:
             await send("No ignored extensions set.")
-        return
 
-    if args[0] == "-rm":
-        # Remove extensions
+    async def remove_ignored():
         removed = []
         for ext in args[1:]:
-            ext = ext.lower() if ext.startswith(".") else f".{ext.lower()}"
+            ext = normalize_ext(ext)
             if ext in ignored:
                 ignored.remove(ext)
                 removed.append(ext)
@@ -60,20 +53,36 @@ async def ignore_extensions_command(
             await send(f"Removed from ignore list: {', '.join(removed)}")
         else:
             await send("No matching extensions found in ignore list.")
-        return
 
-    # Add extensions
-    added = []
-    for ext in args:
-        ext = ext.lower() if ext.startswith(".") else f".{ext.lower()}"
-        if ext not in ignored:
-            ignored.append(ext)
-            added.append(ext)
-    db[user_id] = {**user_stats, "ignored_extensions": ignored}
-    if added:
-        await send(f"Added to ignore list: {', '.join(added)}")
-    else:
-        await send("No new extensions added.")
+    async def add_ignored():
+        added = []
+        for ext in args:
+            ext = normalize_ext(ext)
+            if ext not in ignored:
+                ignored.append(ext)
+                added.append(ext)
+        db[user_id] = {**user_stats, "ignored_extensions": ignored}
+        if added:
+            await send(f"Added to ignore list: {', '.join(added)}")
+        else:
+            await send("No new extensions added.")
+
+    if update.effective_user is None:
+        return
+    user_id = update.effective_user.id
+    send = get_send_function(update)
+    args = context.args if hasattr(context, "args") and context.args is not None else []
+    db = Database()
+    user_stats = db[user_id]
+    ignored: list[str] = user_stats.get("ignored_extensions", [])
+
+    if not args:
+        await list_ignored(send, ignored)
+        return
+    if args[0] == "-rm":
+        await remove_ignored()
+        return
+    await add_ignored()
 
 
 async def handle_file(
@@ -195,32 +204,38 @@ async def handle_file(
 async def stats(update: Update) -> None:
     """
     Fetches and sends user statistics as a formatted HTML message.
-
-    Args:
-        - update (Update): The update object that contains information about
-        the incoming update.
-
-    Returns:
-        None
-
-    Raises:
-        Exception: If there is an error while fetching or sending
-        the user statistics.
-
-    The function retrieves the user statistics such as total file size,
-    total download size, number of files uploaded, number of streamable videos,
-    and file extensions. It formats these statistics into an HTML message and
-    sends it to the user. If an error occurs during this process, an error
-    message is logged and a generic error message is sent to the user.
     """
+
+    def format_extension_stats(ext_cats):
+        parts = []
+        for ext, info in ext_cats.items():
+            if isinstance(info, dict):
+                count = info.get("count", 0)
+                size = info.get("size", 0)
+                parts.append(
+                    f"<code>{ext}: {nget_str('%d file', '%d files', count) % count} ({humanize.naturalsize(size)})</code>"
+                )
+            else:
+                parts.append(
+                    f"<code>{ext}: {nget_str('%d file', '%d files', info) % info}</code>"
+                )
+        return parts
+
     if update.effective_user is None:
         return
+
+    user_id = update.effective_user.id
+    db = Database()
+    user_stats = db[user_id]
+    file_count = user_stats["file_count"]
+    streamable_count = user_stats["streamable"]
+    ext_cats = user_stats["extension_categories"]
 
     keyboard = [
         [InlineKeyboardButton(HOME_LABEL, callback_data="start")],
         (
             [InlineKeyboardButton(RESET_LABEL, callback_data="reset")]
-            if not Database().is_stats_empty(update.effective_user.id)
+            if not db.is_stats_empty(user_id)
             else []
         ),
         [InlineKeyboardButton(HELP_LABEL, callback_data="help")],
@@ -229,45 +244,18 @@ async def stats(update: Update) -> None:
     send = get_send_function(update)
 
     try:
-        user_id = update.effective_user.id
-        user_stats = Database()[user_id]
-
-        file_count = user_stats["file_count"]
-        file_count_str = nget_str("%d file", "%d files", file_count) % file_count
-
-        streamable_count = user_stats["streamable"]
-        streamable_count_str = (
-            nget_str("%d video", "%d videos", streamable_count) % streamable_count
-        )
-
         msg_parts = [
-            f"{get_str('Total file size: ')}"
-            f"<code>{humanize.naturalsize(user_stats['total_size'])}</code>",
-            f"{get_str('Total download size: ')}"
-            f"<code>{humanize.naturalsize(user_stats['total_download_size'])}</code>",
-            f"{get_str('Number of files uploaded: ')}<code>{file_count_str}</code>",
-            f"{get_str('Streamable files: ')}<code>{streamable_count_str}</code>",
+            f"{get_str('Total file size: ')}<code>{humanize.naturalsize(user_stats['total_size'])}</code>",
+            f"{get_str('Total download size: ')}<code>{humanize.naturalsize(user_stats['total_download_size'])}</code>",
+            f"{get_str('Number of files uploaded: ')}<code>{nget_str('%d file', '%d files', file_count) % file_count}</code>",
+            f"{get_str('Streamable files: ')}<code>{nget_str('%d video', '%d videos', streamable_count) % streamable_count}</code>",
             f"{get_str('File extensions:')}",
         ]
-
-        if not user_stats["extension_categories"]:
+        if not ext_cats:
             msg_parts.append(f"<code>{get_str('No files uploaded yet.')}</code>")
         else:
-            for ext, info in user_stats["extension_categories"].items():
-                if isinstance(info, dict):
-                    count = info.get("count", 0)
-                    size = info.get("size", 0)
-                    msg_parts.append(
-                        f"<code>{ext}: {nget_str('%d file', '%d files', count) % count} ({humanize.naturalsize(size)})</code>"
-                    )
-                else:
-                    # fallback for legacy data
-                    msg_parts.append(
-                        f"<code>{ext}: {nget_str('%d file', '%d files', info) % info}</code>"
-                    )
-
+            msg_parts.extend(format_extension_stats(ext_cats))
         msg = "\n".join(msg_parts)
-
         await send(msg, parse_mode="HTML", reply_markup=reply_markup)
     except (OSError, ValueError) as error:
         logger.error(get_str("Error getting stats: %s"), error)

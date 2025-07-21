@@ -25,6 +25,13 @@ class Database:
     _instance = None
     db_path = ""
 
+    def __init__(self, db_path: str | None = None):
+        self._conn = None
+        self._user_ids = []
+        self._iter_index = 0
+        if db_path:
+            self.db_path = db_path
+
     def __new__(cls, db_path: str | None = None):
         """
         Ensures that only one instance of the Database class
@@ -41,7 +48,7 @@ class Database:
 
         if cls._instance is None:
             cls._instance = super(Database, cls).__new__(cls)
-            cls._instance.db_path = db_path
+            # __init__ will be called after __new__
         return cls._instance
 
     def _connect(self):
@@ -256,9 +263,9 @@ class Database:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if hasattr(self, "_conn"):
+        if self._conn is not None:
             self._conn.close()
-            del self._conn
+            self._conn = None
 
     def __iter__(self):
         with self._connect() as conn:
@@ -269,10 +276,10 @@ class Database:
         return self
 
     def __next__(self):
-        if not hasattr(self, "_user_ids"):
+        if not self._user_ids:
             self.__iter__()
         if self._iter_index >= len(self._user_ids):
-            del self._user_ids
+            self._user_ids = []
             raise StopIteration
         user_id = self._user_ids[self._iter_index]
         self._iter_index += 1

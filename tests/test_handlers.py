@@ -110,8 +110,8 @@ async def test_handle_file_archive_non_local_mode(
     """Tests handle_file with an archive in non-local mode."""
     test_mock_is_archive.return_value = True
     test_mock_get_str.return_value = "Archives are not supported in non-local mode."
-    with patch("telegram_file_statistics_bot.handlers.Database") as MockDB:
-        db_instance = MockDB.return_value
+    with patch("telegram_file_statistics_bot.handlers.Database") as mock_db:
+        db_instance = mock_db.return_value
         db_instance.get_user_data.return_value = {"ignored_extensions": []}
         await handle_file(test_mock_update, test_mock_context, local_mode=False)
     test_mock_update.message.reply_text.assert_called_with(

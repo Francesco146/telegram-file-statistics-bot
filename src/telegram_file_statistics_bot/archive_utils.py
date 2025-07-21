@@ -132,7 +132,9 @@ async def process_extracted_files(
             extension = os.path.splitext(file)[1].lower()
             if extension in ignored:
                 logger.info(
-                    f"File '{file}' inside archive ignored due to its extension ({extension})."
+                    "File '%s' inside archive ignored due to its extension (%s).",
+                    file,
+                    extension,
                 )
                 continue
             file_path = os.path.join(root, file)

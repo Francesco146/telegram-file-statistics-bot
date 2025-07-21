@@ -17,8 +17,8 @@ async def test_ignore_extensions_add_and_list():
         "telegram_file_statistics_bot.handlers.get_send_function",
         return_value=send_mock,
     ):
-        with patch("telegram_file_statistics_bot.handlers.Database") as MockDB:
-            db_instance = MockDB.return_value
+        with patch("telegram_file_statistics_bot.handlers.Database") as mock_db:
+            db_instance = mock_db.return_value
             db_instance.__getitem__.return_value = {"ignored_extensions": []}
             context = MagicMock(spec=ContextTypes.DEFAULT_TYPE)
             context.args = [".exe", ".mp3"]
@@ -44,8 +44,8 @@ async def test_ignore_extensions_remove():
         "telegram_file_statistics_bot.handlers.get_send_function",
         return_value=send_mock,
     ):
-        with patch("telegram_file_statistics_bot.handlers.Database") as MockDB:
-            db_instance = MockDB.return_value
+        with patch("telegram_file_statistics_bot.handlers.Database") as mock_db:
+            db_instance = mock_db.return_value
             db_instance.__getitem__.return_value = {
                 "ignored_extensions": [".exe", ".mp3"]
             }
