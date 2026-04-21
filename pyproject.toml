@@ -8,7 +8,7 @@ version = "1.4.0"
 dependencies = [
     "python-telegram-bot==21.9",
     "humanize==4.11.0",
-    "python-dotenv==1.0.1",
+    "python-dotenv==1.2.2",
     "argparse==1.4.0",
 ]
 requires-python = ">=3.12"
